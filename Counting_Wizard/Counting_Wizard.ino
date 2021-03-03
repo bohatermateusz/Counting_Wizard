@@ -51,6 +51,8 @@ static int PplCounter = 0;
 static int ROI_height = 0;
 static int ROI_width = 0;
 
+int cnt = 0;
+
 void setup()
 {
     Wire.begin();
@@ -391,11 +393,15 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
                 {
                     // this is an entry
                     Serial.println("Entering");
+                    cnt++;
+                    Serial.println(handleADC());
                 }
                 else if ((PathTrack[1] == 2) && (PathTrack[2] == 3) && (PathTrack[3] == 1))
                 {
                     // This an exit
                     Serial.println("Exiting");
+                    cnt--;
+                    Serial.println(handleADC());
                 }
             }
             for (int i = 0; i < 4; i++)
@@ -417,4 +423,15 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
             PathTrack[PathTrackFillingSize - 1] = AllZonesCurrentStatus;
         }
     }
+}
+
+String handleADC()
+{
+    String adc = String(cnt);
+    return adc;
+}
+
+extern "C"
+{
+#include "user_interface.h"
 }
