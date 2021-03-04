@@ -17,7 +17,7 @@ const char *password = "pass-123456";
 
 AsyncWebServer server(80);
 
-const int threshold_percentage = 80;
+int threshold_percentage = 33;
 
 // if "true", the raw measurements are sent via MQTT during runtime (for debugging) - I'd recommend setting it to "false" to save traffic and system resources.
 // in the calibration phase the raw measurements will still be sent through MQTT
@@ -25,9 +25,6 @@ static bool update_raw_measurements = false;
 
 // this value has to be true if the sensor is oriented as in Duthdeffy's picture
 static bool advised_orientation_of_the_sensor = true;
-
-// this value has to be true if you don't need to compute the threshold every time the device is turned on
-static bool save_calibration_result = true;
 
 char peopleCounterArray[50];
 SFEVL53L1X distanceSensor(Wire);
@@ -62,7 +59,7 @@ void setup()
     if (distanceSensor.init() == false)
         Serial.println("Sensor online!");
     distanceSensor.setIntermeasurementPeriod(100);
-    distanceSensor.setDistanceModeShort();
+    distanceSensor.setDistanceModeLong();
 
     delay(1000);
     zones_calibration();
@@ -212,22 +209,32 @@ void zones_calibration()
         case 4:
             center[0] = 150;
             center[1] = 247;
+            distanceSensor.setDistanceModeShort();
+            threshold_percentage = 80;
             break;
         case 5:
             center[0] = 150;
             center[1] = 247;
+            distanceSensor.setDistanceModeShort();
+            threshold_percentage = 80;
             break;
         case 6:
             center[0] = 159;
             center[1] = 239;
+            distanceSensor.setDistanceModeLong();
+            threshold_percentage = 40;
             break;
         case 7:
             center[0] = 159;
             center[1] = 239;
+            distanceSensor.setDistanceModeLong();
+            threshold_percentage = 40;
             break;
         case 8:
             center[0] = 167;
             center[1] = 231;
+            distanceSensor.setDistanceModeLong();
+            threshold_percentage = 40;
             break;
         }
     }
@@ -238,22 +245,32 @@ void zones_calibration()
         case 4:
             center[0] = 193;
             center[1] = 58;
+            distanceSensor.setDistanceModeShort();
+            threshold_percentage = 80;
             break;
         case 5:
             center[0] = 194;
             center[1] = 59;
+            distanceSensor.setDistanceModeShort();
+            threshold_percentage = 80;
             break;
         case 6:
             center[0] = 194;
             center[1] = 59;
+            distanceSensor.setDistanceModeLong();
+            threshold_percentage = 40;
             break;
         case 7:
             center[0] = 195;
             center[1] = 60;
+            distanceSensor.setDistanceModeLong();
+            threshold_percentage = 40;
             break;
         case 8:
             center[0] = 195;
             center[1] = 60;
+            distanceSensor.setDistanceModeLong();
+            threshold_percentage = 40;
             break;
         }
     }
