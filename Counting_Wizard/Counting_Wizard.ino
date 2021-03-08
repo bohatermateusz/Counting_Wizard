@@ -222,19 +222,19 @@ void zones_calibration()
             center[0] = 159;
             center[1] = 239;
             distanceSensor.setDistanceModeLong();
-            threshold_percentage = 40;
+            threshold_percentage = 33;
             break;
         case 7:
             center[0] = 159;
             center[1] = 239;
             distanceSensor.setDistanceModeLong();
-            threshold_percentage = 40;
+            threshold_percentage = 33;
             break;
         case 8:
             center[0] = 167;
             center[1] = 231;
             distanceSensor.setDistanceModeLong();
-            threshold_percentage = 40;
+            threshold_percentage = 33;
             break;
         }
     }
