@@ -17,7 +17,7 @@ const char *password = "pass-123456";
 
 AsyncWebServer server(80);
 
-int threshold_percentage = 33;
+float threshold_percentage = 80;
 
 // if "true", the raw measurements are sent via MQTT during runtime (for debugging) - I'd recommend setting it to "false" to save traffic and system resources.
 // in the calibration phase the raw measurements will still be sent through MQTT
@@ -49,6 +49,14 @@ static int ROI_height = 0;
 static int ROI_width = 0;
 
 int cnt = 0;
+
+float sum_zone_0;
+float sum_zone_1;
+
+float number_attempts;
+
+float average_zone_0 = sum_zone_0 / number_attempts;
+float average_zone_1 = sum_zone_1 / number_attempts;
 
 void setup()
 {
@@ -163,19 +171,19 @@ void zones_calibration()
     ROI_width = 8;
     delay(500);
     Zone = 0;
-    float sum_zone_0 = 0;
-    float sum_zone_1 = 0;
+    sum_zone_0 = 0;
+    sum_zone_1 = 0;
     uint16_t distance;
-    int number_attempts = 20;
+    number_attempts = 20;
 
     // Preheating Sensor
-    distanceSensor.startRanging()
-        distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
+    distanceSensor.startRanging();
+    distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
     delay(50);
     distanceSensor.setTimingBudgetInMs(50);
     distanceSensor.startRanging(); //Write configuration bytes to initiate measurement
-    delay(10000)
-        Serial.println("Preheating Sensor - 10 seconds");
+    Serial.println("Preheating Sensor - 10 seconds");
+    delay(10000);
     distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
     distanceSensor.stopRanging();
     Serial.println("Preheating Finished");
@@ -206,8 +214,11 @@ void zones_calibration()
     }
 
     // after we have computed the sum for each zone, we can compute the average distance of each zone
-    float average_zone_0 = sum_zone_0 / number_attempts;
-    float average_zone_1 = sum_zone_1 / number_attempts;
+    average_zone_0 = sum_zone_0 / number_attempts;
+    average_zone_1 = sum_zone_1 / number_attempts;
+
+    CalculateThresoldZonePercentage();
+
     // the value of the average distance is used for computing the optimal size of the ROI and consequently also the center of the two zones
     int function_of_the_distance = 16 * (1 - (0.15 * 2) / (0.34 * (min(average_zone_0, average_zone_1) / 1000)));
     delay(1000);
@@ -222,32 +233,22 @@ void zones_calibration()
         case 4:
             center[0] = 150;
             center[1] = 247;
-            distanceSensor.setDistanceModeShort();
-            threshold_percentage = 80;
             break;
         case 5:
             center[0] = 150;
             center[1] = 247;
-            distanceSensor.setDistanceModeShort();
-            threshold_percentage = 80;
             break;
         case 6:
             center[0] = 159;
             center[1] = 239;
-            distanceSensor.setDistanceModeLong();
-            threshold_percentage = 33;
             break;
         case 7:
             center[0] = 159;
             center[1] = 239;
-            distanceSensor.setDistanceModeLong();
-            threshold_percentage = 33;
             break;
         case 8:
             center[0] = 167;
             center[1] = 231;
-            distanceSensor.setDistanceModeLong();
-            threshold_percentage = 33;
             break;
         }
     }
@@ -258,32 +259,22 @@ void zones_calibration()
         case 4:
             center[0] = 193;
             center[1] = 58;
-            distanceSensor.setDistanceModeShort();
-            threshold_percentage = 80;
             break;
         case 5:
             center[0] = 194;
             center[1] = 59;
-            distanceSensor.setDistanceModeShort();
-            threshold_percentage = 80;
             break;
         case 6:
             center[0] = 194;
             center[1] = 59;
-            distanceSensor.setDistanceModeLong();
-            threshold_percentage = 33;
             break;
         case 7:
             center[0] = 195;
             center[1] = 60;
-            distanceSensor.setDistanceModeLong();
-            threshold_percentage = 33;
             break;
         case 8:
             center[0] = 195;
             center[1] = 60;
-            distanceSensor.setDistanceModeLong();
-            threshold_percentage = 33;
             break;
         }
     }
@@ -326,6 +317,9 @@ void zones_calibration()
     }
     average_zone_0 = sum_zone_0 / number_attempts;
     average_zone_1 = sum_zone_1 / number_attempts;
+
+    CalculateThresoldZonePercentage();
+
     float threshold_zone_0 = average_zone_0 * threshold_percentage / 100; // they can be int values, as we are not interested in the decimal part when defining the threshold
     float threshold_zone_1 = average_zone_1 * threshold_percentage / 100;
 
@@ -338,6 +332,30 @@ void zones_calibration()
     int hundred_threshold_zone_1 = threshold_zone_1 / 100;
     int unit_threshold_zone_0 = threshold_zone_0 - 100 * hundred_threshold_zone_0;
     int unit_threshold_zone_1 = threshold_zone_1 - 100 * hundred_threshold_zone_1;
+}
+
+void CalculateThresoldZonePercentage()
+//calculatiing thersold zone
+{
+    Serial.println("Average Zone 0:");
+    Serial.println(average_zone_0);
+    Serial.println("Average Zone 1:");
+    Serial.println(average_zone_1);
+    if (min(average_zone_0, average_zone_1) <= 130)
+    {
+        Serial.println("small distance");
+        threshold_percentage = 80;
+        distanceSensor.setDistanceModeShort();
+        Serial.println(threshold_percentage);
+    }
+    else
+    {
+        //70 suppose to be ambient light immune
+        Serial.println("long distance");
+        threshold_percentage = (70 / min(average_zone_0, average_zone_1)) * 1000;
+        distanceSensor.setDistanceModeLong();
+        Serial.println(threshold_percentage);
+    }
 }
 
 // NOBODY = 0, SOMEONE = 1, LEFT = 0, RIGHT = 1
