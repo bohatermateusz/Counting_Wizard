@@ -167,6 +167,19 @@ void zones_calibration()
     float sum_zone_1 = 0;
     uint16_t distance;
     int number_attempts = 20;
+
+    // Preheating Sensor
+    distanceSensor.startRanging()
+        distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
+    delay(50);
+    distanceSensor.setTimingBudgetInMs(50);
+    distanceSensor.startRanging(); //Write configuration bytes to initiate measurement
+    delay(10000)
+        Serial.println("Preheating Sensor - 10 seconds");
+    distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
+    distanceSensor.stopRanging();
+    Serial.println("Preheating Finished");
+
     for (int i = 0; i < number_attempts; i++)
     {
         // increase sum of values in Zone 0
