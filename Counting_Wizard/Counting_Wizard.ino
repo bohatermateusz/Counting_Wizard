@@ -367,7 +367,8 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
     int AllZonesCurrentStatus = 0;
     int AnEventHasOccured = 0;
 
-    if (Distance < DIST_THRESHOLD_MAX[Zone])
+    // minium distance set to 120 to limit door opening and closing
+    if (Distance < DIST_THRESHOLD_MAX[Zone] && Distance > 120)
     {
         // Someone is in !
         CurrentZoneStatus = SOMEONE;
