@@ -7,15 +7,22 @@
 
 // WebServer
 #include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+//#include <ESPAsyncWebServer.h>
 #include <FS.h>
 #include <Wire.h>
+
+#include "WiFiManager.h"
+WiFiManager wifiManager;
+
+#define WEBSERVER_H
+#include "ESPAsyncWebServer.h"
 
 //SSID and Password to your ESP Access Point
 const char *ssid = "Counting-Wizard";
 const char *password = "pass-123456";
 
 AsyncWebServer server(80);
+DNSServer dns;
 
 float threshold_percentage = 80;
 
@@ -77,6 +84,8 @@ void setup()
     Serial.println("Thresold1:");
     Serial.println(DIST_THRESHOLD_MAX[1]);
     Serial.println();
+
+    wifiManager.autoConnect("AP-NAME");
 
     // Create Access Point
     WiFi.mode(WIFI_AP);
