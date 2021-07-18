@@ -18,8 +18,8 @@ WiFiManager wifiManager;
 #include "ESPAsyncWebServer.h"
 
 //SSID and Password to your ESP Access Point
-const char *ssid = "Counting-Wizard";
-const char *password = "pass-123456";
+//const char *ssid = "Counting-Wizard";
+//const char *password = "pass-123456";
 
 AsyncWebServer server(80);
 DNSServer dns;
@@ -70,6 +70,8 @@ void setup()
     Wire.begin();
     Serial.begin(115200);
 
+    wifiManager.autoConnect("AP-NAME");
+
     Serial.println("VL53L1X Qwiic Test");
     if (distanceSensor.init() == false)
         Serial.println("Sensor online!");
@@ -88,28 +90,28 @@ void setup()
     wifiManager.autoConnect("AP-NAME");
 
     // Create Access Point
-    WiFi.mode(WIFI_AP);
+    //WiFi.mode(WIFI_AP);
     delay(100);
 
-    IPAddress localIp(192, 168, 1, 1);
-    IPAddress gateway(192, 168, 1, 1);
-    IPAddress subnet(255, 255, 255, 0);
+    //IPAddress localIp(192, 168, 1, 1);
+    //IPAddress gateway(192, 168, 1, 1);
+    //IPAddress subnet(255, 255, 255, 0);
 
-    WiFi.softAPConfig(localIp, gateway, subnet);
+    //WiFi.softAPConfig(localIp, gateway, subnet);
 
-    boolean result = WiFi.softAP(ssid, password, 5);
-    if (result == true)
-    {
-        Serial.println("WIFI AP is Ready");
-        //Get IP address
-        IPAddress myIP = WiFi.softAPIP();
-        Serial.print("HotSpt IP:");
-        Serial.println(myIP);
-    }
-    else
-    {
-        Serial.println("Failed to start WIFI AP");
-    }
+    //boolean result = WiFi.softAP(ssid, password, 5);
+    //if (result == true)
+    //{
+    //    Serial.println("WIFI AP is Ready");
+    //    //Get IP address
+    //    IPAddress myIP = WiFi.softAPIP();
+    //    Serial.print("HotSpt IP:");
+    //    Serial.println(myIP);
+    //}
+    //else
+    //{
+    //    Serial.println("Failed to start WIFI AP");
+    //}
 
     if (!SPIFFS.begin())
     {
