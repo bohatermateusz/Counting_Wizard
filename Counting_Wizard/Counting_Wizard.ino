@@ -56,12 +56,20 @@ float number_attempts;
 float average_zone_0 = sum_zone_0 / number_attempts;
 float average_zone_1 = sum_zone_1 / number_attempts;
 
+//declaring PIN for button purpose
+int inPin = 0;
+int val = 0;
+int timeout = 120; // seconds to run for AP portal
+
 void setup()
 {
     Wire.begin();
     Serial.begin(115200);
 
-    wifiManager.autoConnect("AP-NAME");
+    //pinmode for button purpose
+    pinMode(inPin, INPUT);
+
+    wifiManager.autoConnect("Counting_Wizard");
     delay(100);
 
     Serial.println("VL53L1X Qwiic Test");
@@ -114,6 +122,18 @@ void setup()
 
 void loop()
 {
+    // check button status
+    val = digitalRead(inPin); // read input value
+    if (val != HIGH)
+    {
+        // set configportal timeout
+        // set againg wifi configurator
+        server.end();
+        wifiManager.setConfigPortalTimeout(timeout);
+        wifiManager.startConfigPortal("Counting_Wizard");
+        ESP.restart();
+    }
+
     uint16_t distance;
 
     distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
