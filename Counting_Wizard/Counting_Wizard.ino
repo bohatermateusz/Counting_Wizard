@@ -1,13 +1,8 @@
 //Spartfun Libraries
 #include "SparkFun_VL53L1X.h"
 
-// Acess point
-//#include <ESP8266WiFi.h>
-//#include <WiFiClient.h>
-
 // WebServer
 #include <ESPAsyncTCP.h>
-//#include <ESPAsyncWebServer.h>
 #include <FS.h>
 #include <Wire.h>
 
@@ -16,10 +11,6 @@ WiFiManager wifiManager;
 
 #define WEBSERVER_H
 #include "ESPAsyncWebServer.h"
-
-//SSID and Password to your ESP Access Point
-//const char *ssid = "Counting-Wizard";
-//const char *password = "pass-123456";
 
 AsyncWebServer server(80);
 DNSServer dns;
@@ -71,6 +62,7 @@ void setup()
     Serial.begin(115200);
 
     wifiManager.autoConnect("AP-NAME");
+    delay(100);
 
     Serial.println("VL53L1X Qwiic Test");
     if (distanceSensor.init() == false)
@@ -86,30 +78,6 @@ void setup()
     Serial.println("Thresold1:");
     Serial.println(DIST_THRESHOLD_MAX[1]);
     Serial.println();
-
-    // Create Access Point
-    //WiFi.mode(WIFI_AP);
-    delay(100);
-
-    //IPAddress localIp(192, 168, 1, 1);
-    //IPAddress gateway(192, 168, 1, 1);
-    //IPAddress subnet(255, 255, 255, 0);
-
-    //WiFi.softAPConfig(localIp, gateway, subnet);
-
-    // boolean result = WiFi.softAP(ssid, password, 5);
-    // if (result == true)
-    // {
-    //     Serial.println("WIFI AP is Ready");
-    //     //Get IP address
-    //     IPAddress myIP = WiFi.softAPIP();
-    //     Serial.print("HotSpt IP:");
-    //     Serial.println(myIP);
-    // }
-    // else
-    // {
-    //     Serial.println("Failed to start WIFI AP");
-    // }
 
     if (!SPIFFS.begin())
     {
