@@ -2,8 +2,8 @@
 #include "SparkFun_VL53L1X.h"
 
 // Acess point
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
+//#include <ESP8266WiFi.h>
+//#include <WiFiClient.h>
 
 // WebServer
 #include <ESPAsyncTCP.h>
@@ -12,8 +12,8 @@
 #include <Wire.h>
 
 //SSID and Password to your ESP Access Point
-const char *ssid = "Counting-Wizard";
-const char *password = "pass-123456";
+//const char *ssid = "Counting-Wizard";
+//const char *password = "pass-123456";
 
 AsyncWebServer server(80);
 
@@ -79,28 +79,28 @@ void setup()
     Serial.println();
 
     // Create Access Point
-    WiFi.mode(WIFI_AP);
+    //WiFi.mode(WIFI_AP);
     delay(100);
 
-    IPAddress localIp(192, 168, 1, 1);
-    IPAddress gateway(192, 168, 1, 1);
-    IPAddress subnet(255, 255, 255, 0);
+    //IPAddress localIp(192, 168, 1, 1);
+    //IPAddress gateway(192, 168, 1, 1);
+    //IPAddress subnet(255, 255, 255, 0);
 
-    WiFi.softAPConfig(localIp, gateway, subnet);
+    //WiFi.softAPConfig(localIp, gateway, subnet);
 
-    boolean result = WiFi.softAP(ssid, password, 5);
-    if (result == true)
-    {
-        Serial.println("WIFI AP is Ready");
-        //Get IP address
-        IPAddress myIP = WiFi.softAPIP();
-        Serial.print("HotSpt IP:");
-        Serial.println(myIP);
-    }
-    else
-    {
-        Serial.println("Failed to start WIFI AP");
-    }
+    // boolean result = WiFi.softAP(ssid, password, 5);
+    // if (result == true)
+    // {
+    //     Serial.println("WIFI AP is Ready");
+    //     //Get IP address
+    //     IPAddress myIP = WiFi.softAPIP();
+    //     Serial.print("HotSpt IP:");
+    //     Serial.println(myIP);
+    // }
+    // else
+    // {
+    //     Serial.println("Failed to start WIFI AP");
+    // }
 
     if (!SPIFFS.begin())
     {
@@ -109,33 +109,26 @@ void setup()
     }
 
     //Configure Webserver
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/index.html", String(), false);
-    });
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/index.html", String(), false); });
 
-    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/style.css", "text/css");
-    });
+    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/style.css", "text/css"); });
 
-    server.on("/GaugeMeter.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/GaugeMeter.js", "text/css");
-    });
+    server.on("/GaugeMeter.js", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/GaugeMeter.js", "text/css"); });
 
-    server.on("/jquery.min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/jquery.min.js", "text/css");
-    });
+    server.on("/jquery.min.js", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/jquery.min.js", "text/css"); });
 
-    server.on("/jquery-3.3.1.min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/jquery-3.3.1.min.js", "text/css");
-    });
+    server.on("/jquery-3.3.1.min.js", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/jquery-3.3.1.min.js", "text/css"); });
 
-    server.on("/knockout-min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/knockout-min.js", "text/css");
-    });
+    server.on("/knockout-min.js", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/knockout-min.js", "text/css"); });
 
-    server.on("/getADC", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(200, "text/plain", String(handleADC()));
-    });
+    server.on("/getADC", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(200, "text/plain", String(handleADC())); });
 
     // Start server
     server.begin();
