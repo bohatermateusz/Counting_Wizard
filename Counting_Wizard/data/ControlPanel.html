@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.button {
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+</style>
+</head>
+<body>
+
+<button class="button" onclick="GetADC()">Dodaj osobe</button>
+<p id="demo"></p>
+</body>
+</html>
+<script>
+// function myFunction() {
+// var add = 2;
+//   document.getElementById("demo").innerHTML = add;
+// }
+   
+        function GetADC() {
+            
+          var xhttp = new XMLHttpRequest();
+              var adc=0;
+             xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+            adc = Number(this.responseText);
+            document.getElementById("demo").innerHTML = adc;
+            adc++;
+          }
+          };
+          xhttp.open("GET", "/getADC", false);
+          xhttp.send();
+          
+          
+        }
+    </script>

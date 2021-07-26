@@ -115,6 +115,9 @@ void setup()
     server.on("/getADC", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(200, "text/plain", String(handleADC())); });
 
+    server.on("/ControlPanel", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/ControlPanel.html", String(), false); });
+
     // Start server
     server.begin();
     Serial.println("HTTP server started");
