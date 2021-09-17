@@ -27,8 +27,12 @@
 </style>
 </head>
 <body>
-
-<button class="button" onclick="GetADC()">Dodaj osobe</button>
+<br>
+<button class="button" onclick="Add()">Dodaj osobe</button>
+<button class="button" onclick="Substract()">Odejmij osobe</button>
+<br><br><br><br><br><br><br><br>
+<input type="number" id="newNumber" name="fname"><br>
+<button class="button" onclick="SetCounter()">Ustaw wartosc</button>
 <p id="demo"></p>
 </body>
 </html>
@@ -37,6 +41,23 @@
 // var add = 2;
 //   document.getElementById("demo").innerHTML = add;
 // }
+var xhttp = new XMLHttpRequest();
+function Substract() {
+  xhttp.open("POST", "/subtract", true);
+  xhttp.send();
+}
+
+function Add() {
+  xhttp.open("POST", "/add", true);
+  xhttp.send();
+}
+
+function SetCounter() {
+  let newNumbero = document.getElementById('newNumber').value
+  var URL = `/set?number= ${newNumbero}`;
+  xhttp.open("POST", URL, true);
+  xhttp.send();
+}
    
         function GetADC() {
             
@@ -49,7 +70,7 @@
             adc++;
           }
           };
-          xhttp.open("GET", "/getADC", false);
+          xhttp.open("POST", "/add", false);
           xhttp.send();
           
           

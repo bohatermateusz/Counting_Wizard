@@ -118,6 +118,27 @@ void setup()
     server.on("/ControlPanel", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(SPIFFS, "/ControlPanel.html", String(), false); });
 
+    server.on("/add", HTTP_POST, [](AsyncWebServerRequest * request){
+        Serial.print("Adding one person");
+        cnt++;
+        request->send(200);
+    });
+
+    server.on("/subtract", HTTP_POST, [](AsyncWebServerRequest * request){
+        Serial.print("Subtract one person");
+        cnt--;
+        request->send(200);
+    });
+
+    server.on("/set", HTTP_POST, [](AsyncWebServerRequest * request){
+        String arg = request->arg("number");
+        Serial.print("New limit is: ");
+        Serial.println(arg);
+        cnt = arg.toInt();
+        request->send(200);
+     });
+
+
     // Start server
     server.begin();
     Serial.println("HTTP server started");
