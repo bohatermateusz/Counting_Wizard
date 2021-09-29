@@ -47,6 +47,7 @@ static int ROI_height = 0;
 static int ROI_width = 0;
 
 int cnt = 0;
+int limit = 5;
 
 float sum_zone_0;
 float sum_zone_1;
@@ -132,16 +133,35 @@ void setup()
 
     server.on("/set", HTTP_POST, [](AsyncWebServerRequest * request){
         String arg = request->arg("number");
-        Serial.print("New limit is: ");
+        Serial.print("New people value is: ");
         Serial.println(arg);
         cnt = arg.toInt();
         request->send(200);
      });
 
+    server.on("/setNewLimit", HTTP_POST, [](AsyncWebServerRequest * request){
+        String arg = request->arg("number");
+        Serial.print("New limit is: ");
+        Serial.println(arg);
+        limit = arg.toInt();
+        request->send(200);
+     });
+
+    //server.on("/getNewLimit", HTTP_GET, [](AsyncWebServerRequest *request)
+    //          { request->send(200, "text/plain", String(getLimit())); });
+
+   server.on("/getNewLimit", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(200, "text/plain", String(getLimit())); });
 
     // Start server
     server.begin();
     Serial.println("HTTP server started");
+}
+
+String getLimit()
+{
+  String limitAsString = String(limit);
+  return limitAsString;
 }
 
 void loop()
@@ -170,7 +190,7 @@ void loop()
     //Serial.println(distance);
     // inject the new ranged distance in the people counting algorithm
     processPeopleCountingData(distance, Zone);
-
+  
     Zone++;
     Zone = Zone % 2;
 }
