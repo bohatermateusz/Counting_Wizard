@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.button {
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.buttonRed {
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #ff0606;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.submissionfield { width: 90px; height: 390px; border: 1px solid #999999; padding: 5px; }
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.buttonRed:hover {background-color: #f30808}
+
+.buttonRed:active {
+  background-color: #f70707;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+p {
+  color: navy;
+  text-indent: 30px;
+  text-transform: uppercase;
+}
+
+#newNumber
+{
+    height:100px;
+    font-size:25pt;
+    width: 350px;
+}
+
+#newLimit
+{
+    height:100px;
+    font-size:25pt;
+    width: 350px;
+}
+
+#ReadNewNumber
+{
+    height:50px;
+    font-size:15pt;
+    width: 100px;
+}
+
+#ReadNewLimit
+{
+    height:50px;
+    font-size:15pt;
+    width: 100px;
+}
+</style>
+</head>
+<body>
+<br>
+<button class="button" onclick="Add()">Dodaj osobe</button>
+<button class="button" onclick="Substract()">Odejmij osobe</button>
+<br><br><br>
+<input type="number" id="newNumber" name="fname"><br>
+<br>
+<button class="button" onclick="SetCounter()">Ustaw wartosc</button>
+<label for="fname" style="font-size:20px">Aktualna wartosc:</label>
+<input type="number" id="ReadNewNumber" name="fname" readonly="readonly" ><br>
+<br>
+<br>
+<input type="number" id="newLimit" name="fname"><br>
+<br>
+<button class="buttonRed" onclick="SetNewLimit()">Ustaw limit</button>
+<label for="fname" style="font-size:20px" >Aktualny limit:</label>
+<input type="number" id="ReadNewLimit" name="fname" readonly="readonly" ><br>
+</body>
+</html>
+<script>
+
+setInterval(function() {
+	  // Gets ADC value at every half second
+	  GetLimit();
+	  GetPeople();
+	}, 500);
+
+var xhttp = new XMLHttpRequest();
+function Substract() {
+  xhttp.open("POST", "/subtract", true);
+  xhttp.send();
+
+}
+
+function Add() {
+  xhttp.open("POST", "/add", true);
+  xhttp.send();
+}
+
+function SetCounter() {
+  let newNumber = document.getElementById('newNumber').value
+  var URL = `/set?number= ${newNumber}`;
+  xhttp.open("POST", URL, true);
+  xhttp.send();
+}
+
+function SetNewLimit() {
+  let newLimit = document.getElementById('newLimit').value
+  var URL = `/setNewLimit?number= ${newLimit}`;
+  xhttp.open("POST", URL, true);
+  xhttp.send();
+}
+
+function GetLimit() {
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       // Typical action to be performed when the document is ready:
+       document.getElementById("ReadNewLimit").value = xhttp.responseText;
+    }
+};
+xhttp.open("GET", "/getNewLimit", false);
+xhttp.send();
+}
+
+function GetPeople() {
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       // Typical action to be performed when the document is ready:
+       document.getElementById("ReadNewNumber").value = xhttp.responseText;
+    }
+};
+xhttp.open("GET", "/getADC", false);
+xhttp.send();
+}
+    </script>

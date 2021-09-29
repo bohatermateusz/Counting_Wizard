@@ -1,21 +1,19 @@
 //Spartfun Libraries
 #include "SparkFun_VL53L1X.h"
 
-// Acess point
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-
 // WebServer
 #include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
 #include <FS.h>
 #include <Wire.h>
 
-//SSID and Password to your ESP Access Point
-const char *ssid = "Counting-Wizard";
-const char *password = "pass-123456";
+#include "WiFiManager.h"
+WiFiManager wifiManager;
+
+#define WEBSERVER_H
+#include "ESPAsyncWebServer.h"
 
 AsyncWebServer server(80);
+DNSServer dns;
 
 float threshold_percentage = 80;
 
@@ -49,6 +47,7 @@ static int ROI_height = 0;
 static int ROI_width = 0;
 
 int cnt = 0;
+int limit = 5;
 
 float sum_zone_0;
 float sum_zone_1;
@@ -58,10 +57,21 @@ float number_attempts;
 float average_zone_0 = sum_zone_0 / number_attempts;
 float average_zone_1 = sum_zone_1 / number_attempts;
 
+//declaring PIN for button purpose
+int inPin = 0;
+int val = 0;
+int timeout = 120; // seconds to run for AP portal
+
 void setup()
 {
     Wire.begin();
     Serial.begin(115200);
+
+    //pinmode for button purpose
+    pinMode(inPin, INPUT);
+
+    wifiManager.autoConnect("Counting_Wizard");
+    delay(100);
 
     Serial.println("VL53L1X Qwiic Test");
     if (distanceSensor.init() == false)
@@ -78,30 +88,6 @@ void setup()
     Serial.println(DIST_THRESHOLD_MAX[1]);
     Serial.println();
 
-    // Create Access Point
-    WiFi.mode(WIFI_AP);
-    delay(100);
-
-    IPAddress localIp(192, 168, 1, 1);
-    IPAddress gateway(192, 168, 1, 1);
-    IPAddress subnet(255, 255, 255, 0);
-
-    WiFi.softAPConfig(localIp, gateway, subnet);
-
-    boolean result = WiFi.softAP(ssid, password, 5);
-    if (result == true)
-    {
-        Serial.println("WIFI AP is Ready");
-        //Get IP address
-        IPAddress myIP = WiFi.softAPIP();
-        Serial.print("HotSpt IP:");
-        Serial.println(myIP);
-    }
-    else
-    {
-        Serial.println("Failed to start WIFI AP");
-    }
-
     if (!SPIFFS.begin())
     {
         Serial.println("An Error has occurred while mounting SPIFFS");
@@ -109,41 +95,89 @@ void setup()
     }
 
     //Configure Webserver
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/index.html", String(), false);
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/index.html", String(), false); });
+
+    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/style.css", "text/css"); });
+
+    server.on("/GaugeMeter.js", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/GaugeMeter.js", "text/css"); });
+
+    server.on("/jquery.min.js", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/jquery.min.js", "text/css"); });
+
+    server.on("/jquery-3.3.1.min.js", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/jquery-3.3.1.min.js", "text/css"); });
+
+    server.on("/knockout-min.js", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/knockout-min.js", "text/css"); });
+
+    server.on("/getADC", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(200, "text/plain", String(handleADC())); });
+
+    server.on("/ControlPanel", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/ControlPanel.html", String(), false); });
+
+    server.on("/add", HTTP_POST, [](AsyncWebServerRequest * request){
+        Serial.print("Adding one person");
+        cnt++;
+        request->send(200);
     });
 
-    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/style.css", "text/css");
+    server.on("/subtract", HTTP_POST, [](AsyncWebServerRequest * request){
+        Serial.print("Subtract one person");
+        cnt--;
+        request->send(200);
     });
 
-    server.on("/GaugeMeter.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/GaugeMeter.js", "text/css");
-    });
+    server.on("/set", HTTP_POST, [](AsyncWebServerRequest * request){
+        String arg = request->arg("number");
+        Serial.print("New people value is: ");
+        Serial.println(arg);
+        cnt = arg.toInt();
+        request->send(200);
+     });
 
-    server.on("/jquery.min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/jquery.min.js", "text/css");
-    });
+    server.on("/setNewLimit", HTTP_POST, [](AsyncWebServerRequest * request){
+        String arg = request->arg("number");
+        Serial.print("New limit is: ");
+        Serial.println(arg);
+        limit = arg.toInt();
+        request->send(200);
+     });
 
-    server.on("/jquery-3.3.1.min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/jquery-3.3.1.min.js", "text/css");
-    });
+    //server.on("/getNewLimit", HTTP_GET, [](AsyncWebServerRequest *request)
+    //          { request->send(200, "text/plain", String(getLimit())); });
 
-    server.on("/knockout-min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(SPIFFS, "/knockout-min.js", "text/css");
-    });
-
-    server.on("/getADC", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(200, "text/plain", String(handleADC()));
-    });
+   server.on("/getNewLimit", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(200, "text/plain", String(getLimit())); });
 
     // Start server
     server.begin();
     Serial.println("HTTP server started");
 }
 
+String getLimit()
+{
+  String limitAsString = String(limit);
+  return limitAsString;
+}
+
 void loop()
 {
+    // check button status
+    val = digitalRead(inPin); // read input value
+    if (val != HIGH)
+    {
+        // set configportal timeout
+        // set againg wifi configurator
+        server.end();
+        wifiManager.setConfigPortalTimeout(timeout);
+        wifiManager.startConfigPortal("Counting_Wizard");
+        ESP.restart();
+    }
+
     uint16_t distance;
 
     distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
@@ -156,7 +190,7 @@ void loop()
     //Serial.println(distance);
     // inject the new ranged distance in the people counting algorithm
     processPeopleCountingData(distance, Zone);
-
+  
     Zone++;
     Zone = Zone % 2;
 }
