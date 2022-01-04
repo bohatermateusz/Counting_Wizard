@@ -1,7 +1,3 @@
-
-
-
-
 //Spartfun Libraries
 #include "SparkFun_VL53L1X.h"
 
@@ -10,16 +6,11 @@
 #include <FS.h>
 #include <Wire.h>
 
-
-
 #include <vector>
 
 #include "config.h"
 
 static std::vector<AsyncClient*> clients; // a list to hold all clients
-
-
-
 
 #include "WiFiManager.h"
 WiFiManager wifiManager;
@@ -28,7 +19,7 @@ WiFiManager wifiManager;
 #include "ESPAsyncWebServer.h"
 
 AsyncWebServer server(80);
-DNSServer dns;
+DNSServer DNS;
 
 //
 AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws

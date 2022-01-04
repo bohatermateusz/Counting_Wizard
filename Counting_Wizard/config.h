@@ -1,7 +1,5 @@
 #ifndef CONFIG_H
 #define CONFIG_H
-#define TCP_PORT
-#define DNS_PORT
 
 /*
  * This example demonstrate how to use asynchronous client & server APIs
@@ -13,8 +11,6 @@
  *
  * Note: default MSS for ESPAsyncTCP is 536 byte and defualt ACK timeout is 5s.
 */
-
-
 
 #define SERVER_HOST_NAME "esp_server"
 
