@@ -18,8 +18,10 @@ WiFiManager wifiManager;
 #define WEBSERVER_H
 #include "ESPAsyncWebServer.h"
 
+#define DNS_PORT 53
 AsyncWebServer server(80);
 DNSServer DNS;
+
 
 //
 AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
@@ -185,6 +187,7 @@ String getLimit()
 
 void loop()
 {
+  DNS.processNextRequest();
     // check button status
     val = digitalRead(inPin); // read input value
     if (val != HIGH)
