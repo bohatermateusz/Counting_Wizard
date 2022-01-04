@@ -1,3 +1,7 @@
+
+
+
+
 //Spartfun Libraries
 #include "SparkFun_VL53L1X.h"
 
@@ -5,6 +9,17 @@
 #include <ESPAsyncTCP.h>
 #include <FS.h>
 #include <Wire.h>
+
+
+
+#include <vector>
+
+#include "config.h"
+
+static std::vector<AsyncClient*> clients; // a list to hold all clients
+
+
+
 
 #include "WiFiManager.h"
 WiFiManager wifiManager;
@@ -14,6 +29,13 @@ WiFiManager wifiManager;
 
 AsyncWebServer server(80);
 DNSServer dns;
+
+//
+AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
+AsyncEventSource events("/events");
+//
+//
+
 
 float threshold_percentage = 80;
 
@@ -72,6 +94,11 @@ void setup()
 
     wifiManager.autoConnect("Counting_Wizard");
     delay(100);
+
+
+    AsyncServer* serverAA = new AsyncServer(TCP_PORT); // start listening on tcp port 7050
+    serverAA->onClient(&handleNewClient, serverAA);
+    serverAA->begin();
 
     Serial.println("VL53L1X Qwiic Test");
     if (distanceSensor.init() == false)
@@ -147,8 +174,9 @@ void setup()
         request->send(200);
      });
 
-    //server.on("/getNewLimit", HTTP_GET, [](AsyncWebServerRequest *request)
-    //          { request->send(200, "text/plain", String(getLimit())); });
+    // attach AsyncWebSocket
+      ws.onEvent(onEvent);
+    server.addHandler(&ws);
 
    server.on("/getNewLimit", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(200, "text/plain", String(getLimit())); });
@@ -516,4 +544,112 @@ String handleADC()
 extern "C"
 {
 #include "user_interface.h"
+}
+
+void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
+  if(type == WS_EVT_CONNECT){
+    //client connected
+    os_printf("ws[%s][%u] connect\n", server->url(), client->id());
+    client->printf("Hello Client %u :)", client->id());
+    client->ping();
+  } else if(type == WS_EVT_DISCONNECT){
+    //client disconnected
+    os_printf("ws[%s][%u] disconnect: %u\n", server->url(), client->id());
+  } else if(type == WS_EVT_ERROR){
+    //error was received from the other end
+    os_printf("ws[%s][%u] error(%u): %s\n", server->url(), client->id(), *((uint16_t*)arg), (char*)data);
+  } else if(type == WS_EVT_PONG){
+    //pong message was received (in response to a ping request maybe)
+    os_printf("ws[%s][%u] pong[%u]: %s\n", server->url(), client->id(), len, (len)?(char*)data:"");
+  } else if(type == WS_EVT_DATA){
+    //data packet
+    AwsFrameInfo * info = (AwsFrameInfo*)arg;
+    if(info->final && info->index == 0 && info->len == len){
+      //the whole message is in a single frame and we got all of it's data
+      os_printf("ws[%s][%u] %s-message[%llu]: ", server->url(), client->id(), (info->opcode == WS_TEXT)?"text":"binary", info->len);
+      if(info->opcode == WS_TEXT){
+        data[len] = 0;
+        os_printf("%s\n", (char*)data);
+      } else {
+        for(size_t i=0; i < info->len; i++){
+          os_printf("%02x ", data[i]);
+        }
+        os_printf("\n");
+      }
+      if(info->opcode == WS_TEXT)
+        client->text("I got your text message");
+      else
+        client->binary("I got your binary message");
+    } else {
+      //message is comprised of multiple frames or the frame is split into multiple packets
+      if(info->index == 0){
+        if(info->num == 0)
+          os_printf("ws[%s][%u] %s-message start\n", server->url(), client->id(), (info->message_opcode == WS_TEXT)?"text":"binary");
+        os_printf("ws[%s][%u] frame[%u] start[%llu]\n", server->url(), client->id(), info->num, info->len);
+      }
+
+      os_printf("ws[%s][%u] frame[%u] %s[%llu - %llu]: ", server->url(), client->id(), info->num, (info->message_opcode == WS_TEXT)?"text":"binary", info->index, info->index + len);
+      if(info->message_opcode == WS_TEXT){
+        data[len] = 0;
+        os_printf("%s\n", (char*)data);
+      } else {
+        for(size_t i=0; i < len; i++){
+          os_printf("%02x ", data[i]);
+        }
+        os_printf("\n");
+      }
+
+      if((info->index + len) == info->len){
+        os_printf("ws[%s][%u] frame[%u] end[%llu]\n", server->url(), client->id(), info->num, info->len);
+        if(info->final){
+          os_printf("ws[%s][%u] %s-message end\n", server->url(), client->id(), (info->message_opcode == WS_TEXT)?"text":"binary");
+          if(info->message_opcode == WS_TEXT)
+            client->text("I got your text message");
+          else
+            client->binary("I got your binary message");
+        }
+      }
+    }
+  }
+}
+
+ /* clients events */
+static void handleError(void* arg, AsyncClient* client, int8_t error) {
+  Serial.printf("\n connection error %s from client %s \n", client->errorToString(error), client->remoteIP().toString().c_str());
+}
+
+static void handleData(void* arg, AsyncClient* client, void *data, size_t len) {
+  Serial.printf("\n data received from client %s \n", client->remoteIP().toString().c_str());
+  Serial.write((uint8_t*)data, len);
+
+  // reply to client
+  if (client->space() > 32 && client->canSend()) {
+    char reply[32];
+    sprintf(reply, "this is from %s", SERVER_HOST_NAME);
+    client->add(reply, strlen(reply));
+    client->send();
+  }
+}
+
+static void handleDisconnect(void* arg, AsyncClient* client) {
+  Serial.printf("\n client %s disconnected \n", client->remoteIP().toString().c_str());
+}
+
+static void handleTimeOut(void* arg, AsyncClient* client, uint32_t time) {
+  Serial.printf("\n client ACK timeout ip: %s \n", client->remoteIP().toString().c_str());
+}
+
+
+/* server events */
+static void handleNewClient(void* arg, AsyncClient* client) {
+  Serial.printf("\n new client has been connected to server, ip: %s", client->remoteIP().toString().c_str());
+
+  // add to list
+  clients.push_back(client);
+  
+  // register events
+  client->onData(&handleData, NULL);
+  client->onError(&handleError, NULL);
+  client->onDisconnect(&handleDisconnect, NULL);
+  client->onTimeout(&handleTimeOut, NULL);
 }
