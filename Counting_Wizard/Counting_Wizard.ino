@@ -94,19 +94,7 @@ void setup()
     delay(1000);
       }
 
-      // server address, port and URL
-    webSocket.begin("192.168.0.150", 80, "/ws");
 
-      // event handler
-    webSocket.onEvent(webSocketEvent);
-      // try ever 5000 again if connection has failed
-    webSocket.setReconnectInterval(5000);
-
-      // start heartbeat (optional)
-      // ping server every 15000 ms
-      // expect pong from server within 3000 ms
-      // consider connection disconnected if pong is not received 2 times
-    webSocket.enableHeartbeat(15000, 3000, 2);
     
     
     //pinmode for button purpose
@@ -194,16 +182,31 @@ void setup()
         request->send(200);
      });
 
-    // attach AsyncWebSocket
-      ws.onEvent(onEvent);
-    server.addHandler(&ws);
-
    server.on("/getNewLimit", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(200, "text/plain", String(getLimit())); });
 
+   // attach AsyncWebSocket
+   ws.onEvent(onEvent);
+   server.addHandler(&ws);
+    
     // Start server
     server.begin();
     Serial.println("HTTP server started");
+
+          // server address, port and URL
+    webSocket.begin("192.168.0.108", 80, "/ws");
+
+      // event handler
+    webSocket.onEvent(webSocketEvent);
+      // try ever 5000 again if connection has failed
+    webSocket.setReconnectInterval(5000);
+
+      // start heartbeat (optional)
+      // ping server every 15000 ms
+      // expect pong from server within 3000 ms
+      // consider connection disconnected if pong is not received 2 times
+    webSocket.enableHeartbeat(15000, 3000, 2);
+    Serial.println("webSocket Client started");
 }
 
 String getLimit()
@@ -525,13 +528,16 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
                 {
                     // this is an entry
                     Serial.println("Entering");
+                    ws.printfAll("Message for client from sever: plus one person");
                     cnt++;
+                    
                     Serial.println(handleADC());
                 }
                 else if ((PathTrack[1] == 2) && (PathTrack[2] == 3) && (PathTrack[3] == 1))
                 {
                     // This an exit
                     Serial.println("Exiting");
+                    ws.printfAll("Message for client from sever: minus one person");
                     cnt--;
                     Serial.println(handleADC());
                 }
@@ -599,7 +605,7 @@ void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTyp
         os_printf("\n");
       }
       if(info->opcode == WS_TEXT)
-        client->text("I got your text message");
+        client->text(String(cnt));
       else
         client->binary("I got your binary message");
     } else {
@@ -690,10 +696,22 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
     }
       break;
     case WStype_TEXT:
+
+       if (payload[0] == '1')
+      {
+          webSocket.sendTXT("True, someone entered");
+          Serial.println("True, someone entered");        
+      }
+      else if (payload[0] == '0')
+      {
+          webSocket.sendTXT("False, no one entered");
+          Serial.println("False, no one entered");        
+      }
+    
       USE_SERIAL.printf("[WSc] get text: %s\n", payload);
 
       // send message to server
-      // webSocket.sendTXT("message here");
+       //webSocket.sendTXT("sample message here");
       break;
     case WStype_BIN:
       USE_SERIAL.printf("[WSc] get binary length: %u\n", length);
