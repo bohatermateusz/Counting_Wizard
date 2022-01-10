@@ -194,7 +194,7 @@ void setup()
     Serial.println("HTTP server started");
 
           // server address, port and URL
-    webSocket.begin("192.168.0.108", 80, "/ws");
+    webSocket.begin("192.168.0.150", 80, "/ws");
 
       // event handler
     webSocket.onEvent(webSocketEvent);
@@ -528,7 +528,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
                 {
                     // this is an entry
                     Serial.println("Entering");
-                    ws.printfAll("Message for client from sever: plus one person");
+                    ws.printfAll("1");
                     cnt++;
                     
                     Serial.println(handleADC());
@@ -537,7 +537,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
                 {
                     // This an exit
                     Serial.println("Exiting");
-                    ws.printfAll("Message for client from sever: minus one person");
+                    ws.printfAll("0");
                     cnt--;
                     Serial.println(handleADC());
                 }
@@ -605,7 +605,7 @@ void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTyp
         os_printf("\n");
       }
       if(info->opcode == WS_TEXT)
-        client->text(String(cnt));
+        client->text("I have got your text message");
       else
         client->binary("I got your binary message");
     } else {
@@ -696,15 +696,19 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
     }
       break;
     case WStype_TEXT:
-
-       if (payload[0] == '1')
+      //1 IS SOMEONE ENETERD
+       if ((payload[0] == '1') && (cnt == 1))
       {
-          webSocket.sendTXT("True, someone entered");
+        //porównanie cnt(serwerowego) ze stanem aktualnym
+          //webSocket.sendTXT("True, someone entered");
           Serial.println("True, someone entered");        
       }
-      else if (payload[0] == '0')
+      //0 IS NOONE ENETERED
+      if ((payload[0] == '0') && (cnt == 0))
       {
-          webSocket.sendTXT("False, no one entered");
+        //porównanie cnt(serwerowego) ze stanem aktualnym
+         // webSocket.sendTXT("False, no one entered");
+         
           Serial.println("False, no one entered");        
       }
     
