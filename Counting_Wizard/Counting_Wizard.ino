@@ -82,6 +82,14 @@ float average_zone_1 = sum_zone_1 / number_attempts;
 int inPin = 0;
 int val = 0;
 int timeout = 120; // seconds to run for AP portal
+//////////////////////////////////
+unsigned long GCB1currentMillis;
+unsigned long GCB1ControlMillis;
+//////////////////////////////////
+
+unsigned long lastChange;
+
+//////////////////////////////////
 
 void setup()
 {
@@ -214,11 +222,46 @@ String getLimit()
   String limitAsString = String(limit);
   return limitAsString;
 }
+///////////////////////////////////////
 
+
+int GCB1Control; 
+int GCB1DoneFlag;
+///////////////////////////////////////
 void loop()
 {
   webSocket.loop();
   DNS.processNextRequest();
+  
+///////////////////////////////////
+ //ENGINE 1 GENERATOR CONTROL BREAKER 1 CONTROL START
+  GCB1currentMillis = millis(); //Update to current millis
+  if (GCB1Control == LOW)  
+   { 
+    GCB1ControlMillis = GCB1currentMillis; // reset the clock to current millis
+    Serial.println("off");
+    //GCB1 = 0; // Turn GCB1 to OFF
+    GCB1DoneFlag = false; // so it can be triggered again with next button press
+   }
+        // next line will only be true if the button is kept pressed for longer than Delay
+  if (GCB1currentMillis - GCB1ControlMillis > 5000)
+   {
+    if (GCB1DoneFlag == false)
+     {
+      GCB1DoneFlag = true; // so it won't be turned on twice
+      Serial.println("on");
+      //GCB1 = 1;  // Turn GCB1 to ON
+     }
+   }
+
+//////////////////////////////////
+  if ( millis() - lastChange >= 1000 )
+  {
+  GCB1Control = LOW;
+  }
+//////////////////////////////////
+
+  
     // check button status
     val = digitalRead(inPin); // read input value
     if (val != HIGH)
@@ -528,6 +571,10 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
                 {
                     // this is an entry
                     Serial.println("Entering");
+                    ///////////////////////////////////
+                    ChangeValue();
+                    //GCB1Control = HIGH;
+                    ///////////////////////////////////
                     ws.printfAll("1");
                     cnt++;
                     
@@ -734,4 +781,10 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
             break;
     }
 
+}
+
+void ChangeValue()
+{
+  GCB1Control = HIGH;
+  lastChange = millis();
 }
