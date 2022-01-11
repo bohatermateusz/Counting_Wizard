@@ -5,9 +5,7 @@
 #include <ESPAsyncTCP.h>
 #include <FS.h>
 #include <Wire.h>
-
 #include <vector>
-
 #include "config.h"
 
 static std::vector<AsyncClient*> clients; // a list to hold all clients
@@ -28,13 +26,10 @@ WiFiManager wifiManager;
 AsyncWebServer server(80);
 DNSServer DNS;
 
-
 //
 AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
 AsyncEventSource events("/events");
 //
-//
-
 
 float threshold_percentage = 80;
 
@@ -84,9 +79,10 @@ int val = 0;
 int timeout = 120; // seconds to run for AP portal
 
 //////////////////////////////////
-int Flag;
-unsigned long lastChange;
-
+int FlagEnter;
+unsigned long lastChangeEnter;
+int FlagExit;
+unsigned long lastChangeExit;
 /////////////////////////////////
 void setup()
 {
@@ -99,15 +95,11 @@ void setup()
     delay(1000);
       }
 
-
-    
-    
     //pinmode for button purpose
     pinMode(inPin, INPUT);
 
     wifiManager.autoConnect("Counting_Wizard");
     delay(100);
-
 
     AsyncServer* serverAA = new AsyncServer(TCP_PORT); // start listening on tcp port 7050
     serverAA->onClient(&handleNewClient, serverAA);
@@ -226,9 +218,13 @@ void loop()
   DNS.processNextRequest();
   
 //////////////////////////////////
-  if ( millis() - lastChange >= 5000 )
+  if ( millis() - lastChangeEnter >= 5000 )
   {
-    Flag = 0;
+    FlagEnter = 0;
+  }
+    if ( millis() - lastChangeExit >= 5000 )
+  {
+    FlagExit = 1;
   }
 //////////////////////////////////
 
@@ -542,28 +538,19 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
                 {
                     // this is an entry
                     Serial.println("Entering");
-                    ///////////////////////////////////
-                     String StrDos = "Flag value:" + Flag ;
-                    Serial.println(StrDos);
-                    //Serial.println(Flag);
-                    ChangeFlagValue();
-                    String StrDosTwo = "Flag value:" + Flag ;
-                    Serial.println(StrDosTwo);
-                    //Serial.println(Flag);
-                    //GCB1Control = HIGH;
-                    ///////////////////////////////////
+                    FlagForEntering();
                     ws.printfAll("1");
-                    cnt++;
-                    
-                    Serial.println(handleADC());
+                    //cnt++;
+                    //Serial.println(handleADC());
                 }
                 else if ((PathTrack[1] == 2) && (PathTrack[2] == 3) && (PathTrack[3] == 1))
                 {
                     // This an exit
                     Serial.println("Exiting");
+                    FlagForExiting();
                     ws.printfAll("0");
-                    cnt--;
-                    Serial.println(handleADC());
+                    //cnt--;
+                    //Serial.println(handleADC());
                 }
             }
             for (int i = 0; i < 4; i++)
@@ -721,24 +708,26 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
       break;
     case WStype_TEXT:
       //1 IS SOMEONE ENETERD
-       if ((payload[0] == '1') && (Flag == 1))
+       if ((payload[0] == '1') && (FlagEnter == 1))
       {
-        //porównanie cnt(serwerowego) ze stanem aktualnym
           //webSocket.sendTXT("True, someone entered");
           Serial.println("True, someone entered");
           cnt++;        
       }
       //0 IS NOONE ENETERED
-      if ((payload[0] == '0') && (Flag == 0))
+      if ((payload[0] == '0') && (FlagExit == 0))
       {
-        //porównanie cnt(serwerowego) ze stanem aktualnym
          // webSocket.sendTXT("False, no one entered");
-         
           Serial.println("False, no one entered");    
           cnt--;    
       }
     
       USE_SERIAL.printf("[WSc] get text: %s\n", payload);
+      //String customEnter = "Entering " + String(FlagEnter);
+      Serial.println(String(FlagEnter));
+      //String customExit = "Exiting " + String(FlagExit);
+      Serial.println(String(FlagExit));
+
 
       // send message to server
        //webSocket.sendTXT("sample message here");
@@ -763,8 +752,14 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
 }
 
 
-void ChangeFlagValue()
+void FlagForEntering()
 {
-  Flag = 1;
-  lastChange = millis();
+  FlagEnter = 1;
+  lastChangeEnter = millis();
+}
+
+void FlagForExiting()
+{
+  FlagExit = 0;
+  lastChangeExit = millis();
 }
