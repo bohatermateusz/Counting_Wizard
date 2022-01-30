@@ -81,6 +81,8 @@ int timeout = 120; // seconds to run for AP portal
 //Flag for communication between 2 devices
 int Flag;
 unsigned long lastChange;
+int FlagExternal;
+unsigned long lastChangeExternal;
 
 void setup()
 {
@@ -220,12 +222,16 @@ void loop()
   webSocket.loop();
   DNS.processNextRequest();
 
-  //////////////////////////////////
-  //  if (millis() - lastChange >= 250)
-  //  {
-  //Flag = 0;
-  //  }
-  //////////////////////////////////
+  //Flagchange
+  if (millis() - lastChange >= 3000)
+  {
+    Flag = 0;
+  }
+
+  if (millisExternal() - lastChangeExternal >= 3000)
+  {
+    FlagExternal = 0;
+  }
 
   // check button status
   val = digitalRead(inPin); // read input value
@@ -738,7 +744,7 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
   break;
   case WStype_TEXT:
     //1 IS SOMEONE ENETERD
-    if ((payload[0] == '1') && (Flag == 1))
+    if (payload[0] == '1')
     {
       FlagForFlowExternalDevice(1)
           //webSocket.sendTXT("True, someone entered");
@@ -746,7 +752,7 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
       //cnt++;
     }
     //0 IS NOONE ENETERED
-    if ((payload[0] == '2') && (Flag == 2))
+    if (payload[0] == '2')
     {
       FlagForFlowExternalDevice(2)
           // webSocket.sendTXT("False, no one entered");
@@ -789,6 +795,6 @@ void FlagForFlow(int flag)
 
 void FlagForFlowExternalDevice(int flag)
 {
-  Flag = flag;
-  lastChange = millis();
+  FlagExternal = flag;
+  lastChangeExternal = millisExternal();
 }
