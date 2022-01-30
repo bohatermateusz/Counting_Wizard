@@ -196,7 +196,7 @@ void setup()
   Serial.println("HTTP server started");
 
   // server address, port and URL
-  webSocket.begin("192.168.0.108", 80, "/ws");
+  webSocket.begin("192.168.0.115", 80, "/ws");
 
   // event handler
   webSocket.onEvent(webSocketEvent);
@@ -265,11 +265,13 @@ void loop()
   {
     cnt++;
     Flag = 0;
+    FlagExternal = 0;
   }
   if ((Flag == 2) || (FlagExternal == 2))
   {
     cnt--;
     Flag = 0;
+    FlagExternal = 0;
   }
 }
 
