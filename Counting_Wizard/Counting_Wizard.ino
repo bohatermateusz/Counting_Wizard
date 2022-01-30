@@ -83,6 +83,8 @@ int Flag;
 unsigned long lastChange;
 int FlagExternal;
 unsigned long lastChangeExternal;
+int FlagLastChangeInLoop;
+unsigned long lastChangeInLoop;
 
 void setup()
 {
@@ -233,6 +235,11 @@ void loop()
     FlagExternal = 0;
   }
 
+  //(millis() - lastChangeInLoop >= 3000)
+  //{
+  //  FlagLastChangeInLoop = 0;
+  //}
+
   // check button status
   val = digitalRead(inPin); // read input value
   if (val != HIGH)
@@ -261,17 +268,19 @@ void loop()
   Zone++;
   Zone = Zone % 2;
 
-  if ((Flag == 1) || (FlagExternal == 1))
+  if (((Flag == 1) || (FlagExternal == 1)) && ((millis() - lastChangeInLoop >= 5000)))
   {
     cnt++;
     Flag = 0;
     FlagExternal = 0;
+    lastChangeInLoop = millis();
   }
-  if ((Flag == 2) || (FlagExternal == 2))
+  if (((Flag == 2) || (FlagExternal == 2)) && ((millis() - lastChangeInLoop >= 5000)))
   {
     cnt--;
     Flag = 0;
     FlagExternal = 0;
+    lastChangeInLoop = millis();
   }
 }
 
@@ -760,16 +769,16 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
     if (payload[0] == '1')
     {
       FlagForFlowExternalDevice(1);
-          //webSocket.sendTXT("True, someone entered");
-          Serial.println("External Device Sent: Entered");
+      //webSocket.sendTXT("True, someone entered");
+      Serial.println("External Device Sent: Entered");
       //cnt++;
     }
     //0 IS NOONE ENETERED
     if (payload[0] == '2')
     {
       FlagForFlowExternalDevice(2);
-          // webSocket.sendTXT("False, no one entered");
-          Serial.println("External Device Sent: Exit");
+      // webSocket.sendTXT("False, no one entered");
+      Serial.println("External Device Sent: Exit");
       //cnt--;
     }
 
