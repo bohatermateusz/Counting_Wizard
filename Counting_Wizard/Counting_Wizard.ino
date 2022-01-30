@@ -260,6 +260,17 @@ void loop()
 
   Zone++;
   Zone = Zone % 2;
+
+  if ((Flag == 1) || (FlagExternal == 1))
+  {
+    cnt++;
+    Flag = 0;
+  }
+  if ((Flag == 2) || (FlagExternal == 2))
+  {
+    cnt--;
+    Flag = 0;
+  }
 }
 
 void zones_calibration()
