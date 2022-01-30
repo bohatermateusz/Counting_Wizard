@@ -740,16 +740,18 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
     //1 IS SOMEONE ENETERD
     if ((payload[0] == '1') && (Flag == 1))
     {
-      //webSocket.sendTXT("True, someone entered");
-      Serial.println("True, someone entered");
-      cnt++;
+      FlagForFlowExternalDevice(1)
+          //webSocket.sendTXT("True, someone entered");
+          Serial.println("External Device Sent: Entered");
+      //cnt++;
     }
     //0 IS NOONE ENETERED
     if ((payload[0] == '2') && (Flag == 2))
     {
-      // webSocket.sendTXT("False, no one entered");
-      Serial.println("False, no one entered");
-      cnt--;
+      FlagForFlowExternalDevice(2)
+          // webSocket.sendTXT("False, no one entered");
+          Serial.println("External Device Sent: Exit");
+      //cnt--;
     }
 
     USE_SERIAL.printf("[WSc] get text: %s\n", payload);
@@ -780,6 +782,12 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
 
 //0-null; 1-entered; 2-exited;
 void FlagForFlow(int flag)
+{
+  Flag = flag;
+  lastChange = millis();
+}
+
+void FlagForFlowExternalDevice(int flag)
 {
   Flag = flag;
   lastChange = millis();
