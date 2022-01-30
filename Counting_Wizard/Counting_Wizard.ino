@@ -228,7 +228,7 @@ void loop()
     Flag = 0;
   }
 
-  if (millisExternal() - lastChangeExternal >= 3000)
+  if (millis() - lastChangeExternal >= 3000)
   {
     FlagExternal = 0;
   }
@@ -757,7 +757,7 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
     //1 IS SOMEONE ENETERD
     if (payload[0] == '1')
     {
-      FlagForFlowExternalDevice(1)
+      FlagForFlowExternalDevice(1);
           //webSocket.sendTXT("True, someone entered");
           Serial.println("External Device Sent: Entered");
       //cnt++;
@@ -765,7 +765,7 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
     //0 IS NOONE ENETERED
     if (payload[0] == '2')
     {
-      FlagForFlowExternalDevice(2)
+      FlagForFlowExternalDevice(2);
           // webSocket.sendTXT("False, no one entered");
           Serial.println("External Device Sent: Exit");
       //cnt--;
@@ -807,5 +807,5 @@ void FlagForFlow(int flag)
 void FlagForFlowExternalDevice(int flag)
 {
   FlagExternal = flag;
-  lastChangeExternal = millisExternal();
+  lastChangeExternal = millis();
 }
