@@ -198,7 +198,7 @@ void setup()
   Serial.println("HTTP server started");
 
   // server address, port and URL
-  webSocket.begin("192.168.0.115", 80, "/ws");
+  webSocket.begin("192.168.0.171", 80, "/ws");
 
   // event handler
   webSocket.onEvent(webSocketEvent);
@@ -268,19 +268,27 @@ void loop()
   Zone++;
   Zone = Zone % 2;
 
-  if (((Flag == 1) || (FlagExternal == 1)) && ((millis() - lastChangeInLoop >= 5000)))
+  //FlagForFlowExternalDevice
+  if ((millis() - lastChangeInLoop >= 375))
   {
-    cnt++;
-    Flag = 0;
-    FlagExternal = 0;
-    lastChangeInLoop = millis();
-  }
-  if (((Flag == 2) || (FlagExternal == 2)) && ((millis() - lastChangeInLoop >= 5000)))
-  {
-    cnt--;
-    Flag = 0;
-    FlagExternal = 0;
-    lastChangeInLoop = millis();
+    Serial.println("millisValue:");
+    Serial.println(millis());
+    Serial.println("last change millis in loop:");
+    Serial.println(lastChangeInLoop);
+    if (((Flag == 1) || (FlagExternal == 1)))
+    {
+      cnt++;
+      Flag = 0;
+      FlagExternal = 0;
+      //lastChangeInLoop = millis();
+    }
+    if (((Flag == 2) || (FlagExternal == 2)))
+    {
+      cnt--;
+      Flag = 0;
+      FlagExternal = 0;
+      //lastChangeInLoop = millis();
+    }
   }
 }
 
@@ -491,7 +499,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
   int AnEventHasOccured = 0;
 
   // minium distance set to 120 to limit door opening and closing
-  if (Distance < DIST_THRESHOLD_MAX[Zone] && Distance > 120)
+  if (Distance < DIST_THRESHOLD_MAX[Zone] && Distance > 30)
   {
     CurrentZoneStatus = SOMEONE;
   }
@@ -564,6 +572,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
         {
           // this is an entry
           Serial.println("Entering");
+          lastChangeInLoop = millis();
           FlagForFlow(1);
           ws.printfAll("1");
           //cnt++;
@@ -573,6 +582,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
         {
           // This an exit
           Serial.println("Exiting");
+          lastChangeInLoop = millis();
           FlagForFlow(2);
           ws.printfAll("2");
           //cnt--;
@@ -768,18 +778,26 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
     //1 IS SOMEONE ENETERD
     if (payload[0] == '1')
     {
-      FlagForFlowExternalDevice(1);
+
+      //Serial.println("millis in loop when messege received when entering:");
+      //Serial.println(millis());
       //webSocket.sendTXT("True, someone entered");
       Serial.println("External Device Sent: Entered");
+      lastChangeInLoop = millis();
+      FlagForFlowExternalDevice(1);
       //cnt++;
     }
     //0 IS NOONE ENETERED
     if (payload[0] == '2')
     {
-      FlagForFlowExternalDevice(2);
+
+      //Serial.println("millis in loop when messege received when exiting:");
+      //Serial.println(millis());
       // webSocket.sendTXT("False, no one entered");
       Serial.println("External Device Sent: Exit");
+      lastChangeInLoop = millis();
       //cnt--;
+      FlagForFlowExternalDevice(2);
     }
 
     USE_SERIAL.printf("[WSc] get text: %s\n", payload);
