@@ -198,7 +198,7 @@ void setup()
   Serial.println("HTTP server started");
 
   // server address, port and URL
-  webSocket.begin("192.168.0.171", 80, "/ws");
+  webSocket.begin("192.168.0.115", 80, "/ws");
 
   // event handler
   webSocket.onEvent(webSocketEvent);
@@ -225,15 +225,15 @@ void loop()
   DNS.processNextRequest();
 
   //Flagchange
-  if (millis() - lastChange >= 3000)
-  {
-    Flag = 0;
-  }
+  //if (millis() - lastChange <= 1000)
+  //{
+  //  Flag = 0;
+  //}
 
-  if (millis() - lastChangeExternal >= 3000)
-  {
-    FlagExternal = 0;
-  }
+  //if (millis() - lastChangeExternal <= 1000)
+  //{
+  //  FlagExternal = 0;
+  //}
 
   //(millis() - lastChangeInLoop >= 3000)
   //{
@@ -269,25 +269,56 @@ void loop()
   Zone = Zone % 2;
 
   //FlagForFlowExternalDevice
-  if ((millis() - lastChangeInLoop >= 375))
+  //Serial.println("millisValue:");
+  //Serial.println(millis());
+  //Serial.println("last change millis in loop:");
+  //Serial.println(lastChangeInLoop);
+
+  //Serial.println("Internal Flag value:")
+  //    Serial.println(Flag);
+  //Serial.println("External Flag value:")
+  //    Serial.println(FlagExternal);
+  if (((Flag == 1) || (FlagExternal == 1)))
   {
-    Serial.println("millisValue:");
-    Serial.println(millis());
-    Serial.println("last change millis in loop:");
-    Serial.println(lastChangeInLoop);
-    if (((Flag == 1) || (FlagExternal == 1)))
+          Serial.println("Internal Flag value:");
+          Serial.println(Flag);
+      Serial.println("External Flag value:");
+          Serial.println(FlagExternal);
+    while (millis() - lastChangeInLoop <= 1500)
     {
-      cnt++;
-      Flag = 0;
-      FlagExternal = 0;
-      //lastChangeInLoop = millis();
+
+      if (((Flag == 1) || (Flag == 0)) || ((FlagExternal == 1) || (FlagExternal == 0)))
+      {
+        cnt++;
+        Flag = 3;
+        FlagExternal = 3;
+      }
+      if (((Flag == 2) || (FlagExternal == 2)))
+      {
+        Flag = 0;
+        FlagExternal = 0;
+      }
     }
-    if (((Flag == 2) || (FlagExternal == 2)))
+  }
+  if (((Flag == 2) || (FlagExternal == 2)))
+  {
+          Serial.println("Internal Flag value:");
+          Serial.println(Flag);
+      Serial.println("External Flag value:");
+          Serial.println(FlagExternal);
+    while (millis() - lastChangeInLoop <= 1500)
     {
-      cnt--;
-      Flag = 0;
-      FlagExternal = 0;
-      //lastChangeInLoop = millis();
+      if (((Flag == 2) || (Flag == 0)) || ((FlagExternal == 2) || (FlagExternal == 0)))
+      {
+        cnt--;
+        Flag = 3;
+        FlagExternal = 3;
+      }
+      if (((Flag == 1) || (FlagExternal == 1)))
+      {
+        Flag = 0;
+        FlagExternal = 0;
+      }
     }
   }
 }
