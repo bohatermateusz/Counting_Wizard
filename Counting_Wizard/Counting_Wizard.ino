@@ -286,7 +286,7 @@ void loop()
           Serial.println(FlagExternal);
     while (millis() - lastChangeInLoop <= 1500)
     {
-
+        
       if (((Flag == 1) || (Flag == 0)) || ((FlagExternal == 1) || (FlagExternal == 0)))
       {
         cnt++;
