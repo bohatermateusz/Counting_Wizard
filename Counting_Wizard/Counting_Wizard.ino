@@ -86,11 +86,16 @@ unsigned long lastChangeExternal;
 int FlagLastChangeInLoop;
 unsigned long lastChangeInLoop;
 
+//Async Delay
+#include <AsyncDelay.h>
+AsyncDelay samplingInterval;
+
+
 void setup()
 {
   Wire.begin();
   Serial.begin(115200);
-
+  samplingInterval.start(1500, AsyncDelay::MILLIS);
   for (uint8_t t = 4; t > 0; t--)
   {
     USE_SERIAL.printf("[SETUP] BOOT WAIT %d...\n", t);
@@ -280,13 +285,17 @@ void loop()
   //    Serial.println(FlagExternal);
   if (((Flag == 1) || (FlagExternal == 1)))
   {
-          Serial.println("Internal Flag value:");
-          Serial.println(Flag);
-      Serial.println("External Flag value:");
-          Serial.println(FlagExternal);
-    while (millis() - lastChangeInLoop <= 1500)
+    Serial.println("Internal Flag value:");
+    Serial.println(Flag);
+    Serial.println("External Flag value:");
+    Serial.println(FlagExternal);
+
+    if (samplingInterval.isExpired())
     {
-        
+
+      samplingInterval.repeat();
+      Serial.println("Repeat for Enter!");
+
       if (((Flag == 1) || (Flag == 0)) || ((FlagExternal == 1) || (FlagExternal == 0)))
       {
         cnt++;
@@ -300,14 +309,20 @@ void loop()
       }
     }
   }
+
   if (((Flag == 2) || (FlagExternal == 2)))
   {
-          Serial.println("Internal Flag value:");
-          Serial.println(Flag);
-      Serial.println("External Flag value:");
-          Serial.println(FlagExternal);
-    while (millis() - lastChangeInLoop <= 1500)
+    Serial.println("Internal Flag value:");
+    Serial.println(Flag);
+    Serial.println("External Flag value:");
+    Serial.println(FlagExternal);
+
+    if (samplingInterval.isExpired())
     {
+
+      samplingInterval.repeat();
+      Serial.println("Repeat for Exit!");
+
       if (((Flag == 2) || (Flag == 0)) || ((FlagExternal == 2) || (FlagExternal == 0)))
       {
         cnt--;
