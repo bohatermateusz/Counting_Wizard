@@ -1,4 +1,4 @@
-//Spartfun Libraries
+// Spartfun Libraries
 #include "SparkFun_VL53L1X.h"
 
 // WebServer
@@ -10,7 +10,7 @@
 
 static std::vector<AsyncClient *> clients; // a list to hold all clients
 
-//AsyncWebSocketClient
+// AsyncWebSocketClient
 #include <WebSocketsClient.h>
 #include <Hash.h>
 WebSocketsClient webSocket;
@@ -73,12 +73,12 @@ float number_attempts;
 float average_zone_0 = sum_zone_0 / number_attempts;
 float average_zone_1 = sum_zone_1 / number_attempts;
 
-//declaring PIN for button purpose
+// declaring PIN for button purpose
 int inPin = 0;
 int val = 0;
 int timeout = 120; // seconds to run for AP portal
 
-//Flag for communication between 2 devices
+// Flag for communication between 2 devices
 int Flag;
 unsigned long lastChange;
 int FlagExternal;
@@ -86,10 +86,9 @@ unsigned long lastChangeExternal;
 int FlagLastChangeInLoop;
 unsigned long lastChangeInLoop;
 
-//Async Delay
+// Async Delay
 #include <AsyncDelay.h>
 AsyncDelay samplingInterval;
-
 
 void setup()
 {
@@ -103,7 +102,7 @@ void setup()
     delay(1000);
   }
 
-  //pinmode for button purpose
+  // pinmode for button purpose
   pinMode(inPin, INPUT);
 
   wifiManager.autoConnect("Counting_Wizard");
@@ -134,7 +133,7 @@ void setup()
     return;
   }
 
-  //Configure Webserver
+  // Configure Webserver
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/index.html", String(), false); });
 
@@ -163,15 +162,13 @@ void setup()
             {
               Serial.print("Adding one person");
               cnt++;
-              request->send(200);
-            });
+              request->send(200); });
 
   server.on("/subtract", HTTP_POST, [](AsyncWebServerRequest *request)
             {
               Serial.print("Subtract one person");
               cnt--;
-              request->send(200);
-            });
+              request->send(200); });
 
   server.on("/set", HTTP_POST, [](AsyncWebServerRequest *request)
             {
@@ -179,8 +176,7 @@ void setup()
               Serial.print("New people value is: ");
               Serial.println(arg);
               cnt = arg.toInt();
-              request->send(200);
-            });
+              request->send(200); });
 
   server.on("/setNewLimit", HTTP_POST, [](AsyncWebServerRequest *request)
             {
@@ -188,8 +184,7 @@ void setup()
               Serial.print("New limit is: ");
               Serial.println(arg);
               limit = arg.toInt();
-              request->send(200);
-            });
+              request->send(200); });
 
   server.on("/getNewLimit", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(getLimit())); });
@@ -229,16 +224,16 @@ void loop()
   webSocket.loop();
   DNS.processNextRequest();
 
-  //Flagchange
-  //if (millis() - lastChange <= 1000)
+  // Flagchange
+  // if (millis() - lastChange <= 1000)
   //{
-  //  Flag = 0;
-  //}
+  //   Flag = 0;
+  // }
 
-  //if (millis() - lastChangeExternal <= 1000)
+  // if (millis() - lastChangeExternal <= 1000)
   //{
-  //  FlagExternal = 0;
-  //}
+  //   FlagExternal = 0;
+  // }
 
   //(millis() - lastChangeInLoop >= 3000)
   //{
@@ -262,27 +257,27 @@ void loop()
   distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
   delay(50);
   distanceSensor.setTimingBudgetInMs(50);
-  distanceSensor.startRanging();           //Write configuration bytes to initiate measurement
-  distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
+  distanceSensor.startRanging();           // Write configuration bytes to initiate measurement
+  distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
   distanceSensor.stopRanging();
 
-  //Serial.println(distance);
-  // inject the new ranged distance in the people counting algorithm
+  // Serial.println(distance);
+  //  inject the new ranged distance in the people counting algorithm
   processPeopleCountingData(distance, Zone);
 
   Zone++;
   Zone = Zone % 2;
 
-  //FlagForFlowExternalDevice
-  //Serial.println("millisValue:");
-  //Serial.println(millis());
-  //Serial.println("last change millis in loop:");
-  //Serial.println(lastChangeInLoop);
+  // FlagForFlowExternalDevice
+  // Serial.println("millisValue:");
+  // Serial.println(millis());
+  // Serial.println("last change millis in loop:");
+  // Serial.println(lastChangeInLoop);
 
-  //Serial.println("Internal Flag value:")
-  //    Serial.println(Flag);
-  //Serial.println("External Flag value:")
-  //    Serial.println(FlagExternal);
+  // Serial.println("Internal Flag value:")
+  //     Serial.println(Flag);
+  // Serial.println("External Flag value:")
+  //     Serial.println(FlagExternal);
   if (((Flag == 1) || (FlagExternal == 1)))
   {
     Serial.println("Internal Flag value:");
@@ -358,10 +353,10 @@ void zones_calibration()
   distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
   delay(50);
   distanceSensor.setTimingBudgetInMs(50);
-  distanceSensor.startRanging(); //Write configuration bytes to initiate measurement
+  distanceSensor.startRanging(); // Write configuration bytes to initiate measurement
   Serial.println("Preheating Sensor - 10 seconds");
   delay(10000);
-  distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
+  distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
   distanceSensor.stopRanging();
   Serial.println("Preheating Finished");
 
@@ -371,8 +366,8 @@ void zones_calibration()
     distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
     delay(50);
     distanceSensor.setTimingBudgetInMs(50);
-    distanceSensor.startRanging();           //Write configuration bytes to initiate measurement
-    distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
+    distanceSensor.startRanging();           // Write configuration bytes to initiate measurement
+    distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
     distanceSensor.stopRanging();
     sum_zone_0 = sum_zone_0 + distance;
     Zone++;
@@ -382,8 +377,8 @@ void zones_calibration()
     distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
     delay(50);
     distanceSensor.setTimingBudgetInMs(50);
-    distanceSensor.startRanging();           //Write configuration bytes to initiate measurement
-    distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
+    distanceSensor.startRanging();           // Write configuration bytes to initiate measurement
+    distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
     distanceSensor.stopRanging();
     sum_zone_1 = sum_zone_1 + distance;
     Zone++;
@@ -474,8 +469,8 @@ void zones_calibration()
     distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
     delay(50);
     distanceSensor.setTimingBudgetInMs(50);
-    distanceSensor.startRanging();           //Write configuration bytes to initiate measurement
-    distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
+    distanceSensor.startRanging();           // Write configuration bytes to initiate measurement
+    distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
     distanceSensor.stopRanging();
     sum_zone_0 = sum_zone_0 + distance;
     Zone++;
@@ -485,8 +480,8 @@ void zones_calibration()
     distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
     delay(50);
     distanceSensor.setTimingBudgetInMs(50);
-    distanceSensor.startRanging();           //Write configuration bytes to initiate measurement
-    distance = distanceSensor.getDistance(); //Get the result of the measurement from the sensor
+    distanceSensor.startRanging();           // Write configuration bytes to initiate measurement
+    distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
     distanceSensor.stopRanging();
     sum_zone_1 = sum_zone_1 + distance;
     Zone++;
@@ -512,7 +507,7 @@ void zones_calibration()
 }
 
 void CalculateThresoldZonePercentage()
-//calculatiing thersold zone
+// calculatiing thersold zone
 {
   Serial.println("Average Zone 0:");
   Serial.println(average_zone_0);
@@ -527,7 +522,7 @@ void CalculateThresoldZonePercentage()
   }
   else
   {
-    //70 suppose to be ambient light immune
+    // 70 suppose to be ambient light immune
     Serial.println("long distance");
     threshold_percentage = (70 / min(average_zone_0, average_zone_1)) * 1000;
     distanceSensor.setDistanceModeLong();
@@ -621,8 +616,8 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
           lastChangeInLoop = millis();
           FlagForFlow(1);
           ws.printfAll("1");
-          //cnt++;
-          //Serial.println(handleADC());
+          // cnt++;
+          // Serial.println(handleADC());
         }
         else if ((PathTrack[1] == 2) && (PathTrack[2] == 3) && (PathTrack[3] == 1))
         {
@@ -631,8 +626,8 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
           lastChangeInLoop = millis();
           FlagForFlow(2);
           ws.printfAll("2");
-          //cnt--;
-          //Serial.println(handleADC());
+          // cnt--;
+          // Serial.println(handleADC());
         }
       }
       for (int i = 0; i < 4; i++)
@@ -671,33 +666,33 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
 {
   if (type == WS_EVT_CONNECT)
   {
-    //client connected
+    // client connected
     os_printf("ws[%s][%u] connect\n", server->url(), client->id());
     client->printf("Hello Client %u :)", client->id());
     client->ping();
   }
   else if (type == WS_EVT_DISCONNECT)
   {
-    //client disconnected
+    // client disconnected
     os_printf("ws[%s][%u] disconnect: %u\n", server->url(), client->id());
   }
   else if (type == WS_EVT_ERROR)
   {
-    //error was received from the other end
+    // error was received from the other end
     os_printf("ws[%s][%u] error(%u): %s\n", server->url(), client->id(), *((uint16_t *)arg), (char *)data);
   }
   else if (type == WS_EVT_PONG)
   {
-    //pong message was received (in response to a ping request maybe)
+    // pong message was received (in response to a ping request maybe)
     os_printf("ws[%s][%u] pong[%u]: %s\n", server->url(), client->id(), len, (len) ? (char *)data : "");
   }
   else if (type == WS_EVT_DATA)
   {
-    //data packet
+    // data packet
     AwsFrameInfo *info = (AwsFrameInfo *)arg;
     if (info->final && info->index == 0 && info->len == len)
     {
-      //the whole message is in a single frame and we got all of it's data
+      // the whole message is in a single frame and we got all of it's data
       os_printf("ws[%s][%u] %s-message[%llu]: ", server->url(), client->id(), (info->opcode == WS_TEXT) ? "text" : "binary", info->len);
       if (info->opcode == WS_TEXT)
       {
@@ -719,7 +714,7 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
     }
     else
     {
-      //message is comprised of multiple frames or the frame is split into multiple packets
+      // message is comprised of multiple frames or the frame is split into multiple packets
       if (info->index == 0)
       {
         if (info->num == 0)
@@ -821,38 +816,38 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
   }
   break;
   case WStype_TEXT:
-    //1 IS SOMEONE ENETERD
+    // 1 IS SOMEONE ENETERD
     if (payload[0] == '1')
     {
 
-      //Serial.println("millis in loop when messege received when entering:");
-      //Serial.println(millis());
-      //webSocket.sendTXT("True, someone entered");
+      // Serial.println("millis in loop when messege received when entering:");
+      // Serial.println(millis());
+      // webSocket.sendTXT("True, someone entered");
       Serial.println("External Device Sent: Entered");
       lastChangeInLoop = millis();
       FlagForFlowExternalDevice(1);
-      //cnt++;
+      // cnt++;
     }
-    //0 IS NOONE ENETERED
+    // 0 IS NOONE ENETERED
     if (payload[0] == '2')
     {
 
-      //Serial.println("millis in loop when messege received when exiting:");
-      //Serial.println(millis());
-      // webSocket.sendTXT("False, no one entered");
+      // Serial.println("millis in loop when messege received when exiting:");
+      // Serial.println(millis());
+      //  webSocket.sendTXT("False, no one entered");
       Serial.println("External Device Sent: Exit");
       lastChangeInLoop = millis();
-      //cnt--;
+      // cnt--;
       FlagForFlowExternalDevice(2);
     }
 
     USE_SERIAL.printf("[WSc] get text: %s\n", payload);
-    //String customEnter = "Entering " + String(FlagEnter);
+    // String customEnter = "Entering " + String(FlagEnter);
     Serial.println(String(Flag));
-    //String customExit = "Exiting " + String(FlagExit);
+    // String customExit = "Exiting " + String(FlagExit);
 
     // send message to server
-    //webSocket.sendTXT("sample message here");
+    // webSocket.sendTXT("sample message here");
     break;
   case WStype_BIN:
     USE_SERIAL.printf("[WSc] get binary length: %u\n", length);
@@ -872,7 +867,7 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
   }
 }
 
-//0-null; 1-entered; 2-exited;
+// 0-null; 1-entered; 2-exited;
 void FlagForFlow(int flag)
 {
   Flag = flag;
