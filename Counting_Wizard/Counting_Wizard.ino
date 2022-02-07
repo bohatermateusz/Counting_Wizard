@@ -260,6 +260,7 @@ void loop()
     switch (FlagExternal)
     {
     case 0:
+    case 4:
       cnt++;
       Flag = 3;
       IsAdded = true;
@@ -286,6 +287,7 @@ void loop()
     switch (Flag)
     {
     case 0:
+    case 4:
       cnt++;
       FlagExternal = 3;
       IsAdded = true;
@@ -312,12 +314,13 @@ void loop()
     switch (FlagExternal)
     {
     case 0:
+    case 3:
       cnt--;
-      Flag = 3;
+      Flag = 4;
       IsAdded = false;
       break;
 
-    case 3:
+    case 4:
       if (IsAdded)
       {
         cnt--;
@@ -339,11 +342,12 @@ void loop()
     switch (Flag)
     {
     case 0:
+    case 3:
       cnt--;
-      FlagExternal = 3;
+      FlagExternal = 4;
       IsAdded = false;
       break;
-    case 3:
+    case 4:
       if (IsAdded)
       {
         cnt--;
