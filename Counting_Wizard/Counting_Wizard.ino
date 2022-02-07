@@ -640,21 +640,15 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
         {
           // this is an entry
           Serial.println("Entering");
-          lastChangeInLoop = millis();
           FlagForFlow(1);
           ws.printfAll("1");
-          // cnt++;
-          // Serial.println(handleADC());
         }
         else if ((PathTrack[1] == 2) && (PathTrack[2] == 3) && (PathTrack[3] == 1))
         {
           // This an exit
           Serial.println("Exiting");
-          lastChangeInLoop = millis();
           FlagForFlow(2);
           ws.printfAll("2");
-          // cnt--;
-          // Serial.println(handleADC());
         }
       }
       for (int i = 0; i < 4; i++)
@@ -846,25 +840,13 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
     // 1 IS SOMEONE ENETERD
     if (payload[0] == '1')
     {
-
-      // Serial.println("millis in loop when messege received when entering:");
-      // Serial.println(millis());
-      // webSocket.sendTXT("True, someone entered");
       Serial.println("External Device Sent: Entered");
-      lastChangeInLoop = millis();
       FlagForFlowExternalDevice(1);
-      // cnt++;
     }
     // 0 IS NOONE ENETERED
     if (payload[0] == '2')
     {
-
-      // Serial.println("millis in loop when messege received when exiting:");
-      // Serial.println(millis());
-      //  webSocket.sendTXT("False, no one entered");
       Serial.println("External Device Sent: Exit");
-      lastChangeInLoop = millis();
-      // cnt--;
       FlagForFlowExternalDevice(2);
     }
 
@@ -898,11 +880,9 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
 void FlagForFlow(int flag)
 {
   Flag = flag;
-  lastChange = millis();
 }
 
 void FlagForFlowExternalDevice(int flag)
 {
   FlagExternal = flag;
-  lastChangeExternal = millis();
 }
