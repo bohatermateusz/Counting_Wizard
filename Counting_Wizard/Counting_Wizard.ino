@@ -97,7 +97,7 @@ void setup()
 {
   Wire.begin();
   Serial.begin(115200);
-  samplingInterval.start(1500, AsyncDelay::MILLIS);
+  samplingInterval.start(375, AsyncDelay::MILLIS);
   for (uint8_t t = 4; t > 0; t--)
   {
     USE_SERIAL.printf("[SETUP] BOOT WAIT %d...\n", t);
@@ -357,6 +357,14 @@ void loop()
       }
       break;
     }
+  }
+
+  // Clean flag evry 375ms to cover example when one person enter and after long time second enter and only second counter catch that enter
+  if (samplingInterval.isExpired())
+  {
+    Flag = 0;
+    FlagExternal = 0;
+    samplingInterval.repeat();
   }
 }
 
