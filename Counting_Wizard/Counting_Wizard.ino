@@ -90,6 +90,9 @@ unsigned long lastChangeInLoop;
 #include <AsyncDelay.h>
 AsyncDelay samplingInterval;
 
+//
+bool IsAdded;
+
 void setup()
 {
   Wire.begin();
@@ -224,22 +227,6 @@ void loop()
   webSocket.loop();
   DNS.processNextRequest();
 
-  // Flagchange
-  // if (millis() - lastChange <= 1000)
-  //{
-  //   Flag = 0;
-  // }
-
-  // if (millis() - lastChangeExternal <= 1000)
-  //{
-  //   FlagExternal = 0;
-  // }
-
-  //(millis() - lastChangeInLoop >= 3000)
-  //{
-  //  FlagLastChangeInLoop = 0;
-  //}
-
   // check button status
   val = digitalRead(inPin); // read input value
   if (val != HIGH)
@@ -268,67 +255,107 @@ void loop()
   Zone++;
   Zone = Zone % 2;
 
-  // FlagForFlowExternalDevice
-  // Serial.println("millisValue:");
-  // Serial.println(millis());
-  // Serial.println("last change millis in loop:");
-  // Serial.println(lastChangeInLoop);
-
-  // Serial.println("Internal Flag value:")
-  //     Serial.println(Flag);
-  // Serial.println("External Flag value:")
-  //     Serial.println(FlagExternal);
-  if (((Flag == 1) || (FlagExternal == 1)))
+  if (Flag == 1)
   {
-    Serial.println("Internal Flag value:");
-    Serial.println(Flag);
-    Serial.println("External Flag value:");
-    Serial.println(FlagExternal);
-
-    if (samplingInterval.isExpired())
+    switch (FlagExternal)
     {
-
-      samplingInterval.repeat();
-      Serial.println("Repeat for Enter!");
-
-      if (((Flag == 1) || (Flag == 0)) || ((FlagExternal == 1) || (FlagExternal == 0)))
-      {
-        cnt++;
-        Flag = 3;
-        FlagExternal = 3;
-      }
-      if (((Flag == 2) || (FlagExternal == 2)))
+    case 0:
+      cnt++;
+      Flag = 3;
+      IsAdded = true;
+      break;
+    case 3:
+      if (IsAdded)
       {
         Flag = 0;
         FlagExternal = 0;
       }
+      else
+      {
+        cnt++;
+        Flag = 0;
+        FlagExternal = 0;
+        IsAdded = true;
+      }
+      break;
     }
   }
 
-  if (((Flag == 2) || (FlagExternal == 2)))
+  if (FlagExternal == 1)
   {
-    Serial.println("Internal Flag value:");
-    Serial.println(Flag);
-    Serial.println("External Flag value:");
-    Serial.println(FlagExternal);
-
-    if (samplingInterval.isExpired())
+    switch (Flag)
     {
-
-      samplingInterval.repeat();
-      Serial.println("Repeat for Exit!");
-
-      if (((Flag == 2) || (Flag == 0)) || ((FlagExternal == 2) || (FlagExternal == 0)))
-      {
-        cnt--;
-        Flag = 3;
-        FlagExternal = 3;
-      }
-      if (((Flag == 1) || (FlagExternal == 1)))
+    case 0:
+      cnt++;
+      FlagExternal = 3;
+      IsAdded = true;
+      break;
+    case 3:
+      if (IsAdded)
       {
         Flag = 0;
         FlagExternal = 0;
       }
+      else
+      {
+        cnt++;
+        Flag = 0;
+        FlagExternal = 0;
+        IsAdded = true;
+      }
+      break;
+    }
+  }
+
+  if (Flag == 2)
+  {
+    switch (FlagExternal)
+    {
+    case 0:
+      cnt--;
+      Flag = 3;
+      IsAdded = false;
+      break;
+
+    case 3:
+      if (IsAdded)
+      {
+        cnt--;
+        Flag = 0;
+        FlagExternal = 0;
+        IsAdded = false;
+      }
+      else
+      {
+        Flag = 0;
+        FlagExternal = 0;
+      }
+      break;
+    }
+  }
+
+  if (FlagExternal == 2)
+  {
+    switch (Flag)
+    {
+    case 0:
+      cnt--;
+      FlagExternal = 3;
+      break;
+    case 3:
+      if (IsAdded)
+      {
+        cnt--;
+        Flag = 0;
+        FlagExternal = 0;
+        IsAdded = false;
+      }
+      else
+      {
+        Flag = 0;
+        FlagExternal = 0;
+      }
+      break;
     }
   }
 }
