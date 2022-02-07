@@ -341,6 +341,7 @@ void loop()
     case 0:
       cnt--;
       FlagExternal = 3;
+      IsAdded = false;
       break;
     case 3:
       if (IsAdded)
