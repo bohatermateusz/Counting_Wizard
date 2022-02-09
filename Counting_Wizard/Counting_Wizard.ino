@@ -647,6 +647,16 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
       // check exit or entry only if PathTrackFillingSize is 4 (for example 0 1 3 2) and last event is 0 (nobobdy anywhere)
       if (PathTrackFillingSize == 4)
       {
+        if (PathTrack[0])
+        {
+          Serial.println("false positive inside pathtrack[0]?");
+        }
+
+        if (!((PathTrack[1] == 1) && (PathTrack[2] == 3) && (PathTrack[3] == 2)))
+        {
+          Serial.println("false positive inside pathtrack[0]? in loop with !PathTrack for !1,!2,!3");
+        }
+
         // check exit or entry. no need to check PathTrack[0] == 0 , it is always the case
         Serial.println("false positive?");
         if ((PathTrack[1] == 1) && (PathTrack[2] == 3) && (PathTrack[3] == 2))
