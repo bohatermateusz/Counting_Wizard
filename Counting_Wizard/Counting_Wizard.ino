@@ -365,12 +365,12 @@ void loop()
   }
 
   // Clean flag evry 375ms to cover example when one person enter and after long time second enter and only second counter catch that enter
-  if (samplingInterval.isExpired())
-  {
-    Flag = 0;
-    FlagExternal = 0;
-    samplingInterval.repeat();
-  }
+  // if (samplingInterval.isExpired())
+  //{
+  //  Flag = 0;
+  //  FlagExternal = 0;
+  //  samplingInterval.repeat();
+  //}
 }
 
 void zones_calibration()
