@@ -87,8 +87,8 @@ int FlagLastChangeInLoop;
 unsigned long lastChangeInLoop;
 
 // Async Delay
-#include <AsyncDelay.h>
-AsyncDelay samplingInterval;
+//#include <AsyncDelay.h>
+// AsyncDelay samplingInterval;
 
 //
 bool IsAdded;
@@ -97,7 +97,7 @@ void setup()
 {
   Wire.begin();
   Serial.begin(115200);
-  samplingInterval.start(375, AsyncDelay::MILLIS);
+  // samplingInterval.start(375, AsyncDelay::MILLIS);
   for (uint8_t t = 4; t > 0; t--)
   {
     USE_SERIAL.printf("[SETUP] BOOT WAIT %d...\n", t);
