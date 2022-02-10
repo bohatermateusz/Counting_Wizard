@@ -264,12 +264,25 @@ void loop()
       cnt++;
       Flag = 3;
       IsAdded = true;
+      Serial.println("Internal Flag:");
+      Serial.println(Flag);
+      Serial.println("Is added?");
+      Serial.println(IsAdded);
+      Serial.println("Flag External:");
+      Serial.println(FlagExternal);
       break;
     case 3:
       if (IsAdded)
       {
         Flag = 0;
         FlagExternal = 0;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
       }
       else
       {
@@ -277,8 +290,14 @@ void loop()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = true;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
       }
-      break;
     }
   }
 
@@ -291,12 +310,25 @@ void loop()
       cnt++;
       FlagExternal = 3;
       IsAdded = true;
+      Serial.println("Internal Flag:");
+      Serial.println(Flag);
+      Serial.println("Is added?");
+      Serial.println(IsAdded);
+      Serial.println("Flag External:");
+      Serial.println(FlagExternal);
       break;
     case 3:
       if (IsAdded)
       {
         Flag = 0;
         FlagExternal = 0;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
       }
       else
       {
@@ -304,8 +336,14 @@ void loop()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = true;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
       }
-      break;
     }
   }
 
@@ -318,6 +356,12 @@ void loop()
       cnt--;
       Flag = 4;
       IsAdded = false;
+      Serial.println("Internal Flag:");
+      Serial.println(Flag);
+      Serial.println("Is added?");
+      Serial.println(IsAdded);
+      Serial.println("Flag External:");
+      Serial.println(FlagExternal);
       break;
 
     case 4:
@@ -327,13 +371,26 @@ void loop()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = false;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
       }
       else
       {
         Flag = 0;
         FlagExternal = 0;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
       }
-      break;
     }
   }
 
@@ -346,6 +403,12 @@ void loop()
       cnt--;
       FlagExternal = 4;
       IsAdded = false;
+      Serial.println("Internal Flag:");
+      Serial.println(Flag);
+      Serial.println("Is added?");
+      Serial.println(IsAdded);
+      Serial.println("Flag External:");
+      Serial.println(FlagExternal);
       break;
     case 4:
       if (IsAdded)
@@ -354,13 +417,26 @@ void loop()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = false;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
       }
       else
       {
         Flag = 0;
         FlagExternal = 0;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
       }
-      break;
     }
   }
 
