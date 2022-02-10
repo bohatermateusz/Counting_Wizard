@@ -224,6 +224,7 @@ String getLimit()
 
 void loop()
 {
+  ProcessData();
   webSocket.loop();
   DNS.processNextRequest();
 
@@ -238,6 +239,8 @@ void loop()
     wifiManager.startConfigPortal("Counting_Wizard");
     ESP.restart();
   }
+
+  ProcessData();
 
   uint16_t distance;
 
@@ -254,191 +257,6 @@ void loop()
 
   Zone++;
   Zone = Zone % 2;
-
-  if (Flag == 1)
-  {
-    switch (FlagExternal)
-    {
-    case 0:
-    case 4:
-      cnt++;
-      Flag = 3;
-      IsAdded = true;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
-      break;
-    case 3:
-      if (IsAdded)
-      {
-        Flag = 0;
-        FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
-        break;
-      }
-      else
-      {
-        cnt++;
-        Flag = 0;
-        FlagExternal = 0;
-        IsAdded = true;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
-        break;
-      }
-    }
-  }
-
-  if (FlagExternal == 1)
-  {
-    switch (Flag)
-    {
-    case 0:
-    case 4:
-      cnt++;
-      FlagExternal = 3;
-      IsAdded = true;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
-      break;
-    case 3:
-      if (IsAdded)
-      {
-        Flag = 0;
-        FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
-        break;
-      }
-      else
-      {
-        cnt++;
-        Flag = 0;
-        FlagExternal = 0;
-        IsAdded = true;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
-        break;
-      }
-    }
-  }
-
-  if (Flag == 2)
-  {
-    switch (FlagExternal)
-    {
-    case 0:
-    case 3:
-      cnt--;
-      Flag = 4;
-      IsAdded = false;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
-      break;
-
-    case 4:
-      if (IsAdded)
-      {
-        cnt--;
-        Flag = 0;
-        FlagExternal = 0;
-        IsAdded = false;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
-        break;
-      }
-      else
-      {
-        Flag = 0;
-        FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
-        break;
-      }
-    }
-  }
-
-  if (FlagExternal == 2)
-  {
-    switch (Flag)
-    {
-    case 0:
-    case 3:
-      cnt--;
-      FlagExternal = 4;
-      IsAdded = false;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
-      break;
-    case 4:
-      if (IsAdded)
-      {
-        cnt--;
-        Flag = 0;
-        FlagExternal = 0;
-        IsAdded = false;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
-        break;
-      }
-      else
-      {
-        Flag = 0;
-        FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
-        break;
-      }
-    }
-  }
 
   // Clean flag evry 375ms to cover example when one person enter and after long time second enter and only second counter catch that enter
   // if (samplingInterval.isExpired())
@@ -974,4 +792,192 @@ void FlagForFlow(int flag)
 void FlagForFlowExternalDevice(int flag)
 {
   FlagExternal = flag;
+}
+
+void ProcessData()
+{
+  if (Flag == 1)
+  {
+    switch (FlagExternal)
+    {
+    case 0:
+    case 4:
+      cnt++;
+      Flag = 3;
+      IsAdded = true;
+      Serial.println("Internal Flag:");
+      Serial.println(Flag);
+      Serial.println("Is added?");
+      Serial.println(IsAdded);
+      Serial.println("Flag External:");
+      Serial.println(FlagExternal);
+      break;
+    case 3:
+      if (IsAdded)
+      {
+        Flag = 0;
+        FlagExternal = 0;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
+      }
+      else
+      {
+        cnt++;
+        Flag = 0;
+        FlagExternal = 0;
+        IsAdded = true;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
+      }
+    }
+  }
+
+  if (FlagExternal == 1)
+  {
+    switch (Flag)
+    {
+    case 0:
+    case 4:
+      cnt++;
+      FlagExternal = 3;
+      IsAdded = true;
+      Serial.println("Internal Flag:");
+      Serial.println(Flag);
+      Serial.println("Is added?");
+      Serial.println(IsAdded);
+      Serial.println("Flag External:");
+      Serial.println(FlagExternal);
+      break;
+    case 3:
+      if (IsAdded)
+      {
+        Flag = 0;
+        FlagExternal = 0;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
+      }
+      else
+      {
+        cnt++;
+        Flag = 0;
+        FlagExternal = 0;
+        IsAdded = true;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
+      }
+    }
+  }
+
+  if (Flag == 2)
+  {
+    switch (FlagExternal)
+    {
+    case 0:
+    case 3:
+      cnt--;
+      Flag = 4;
+      IsAdded = false;
+      Serial.println("Internal Flag:");
+      Serial.println(Flag);
+      Serial.println("Is added?");
+      Serial.println(IsAdded);
+      Serial.println("Flag External:");
+      Serial.println(FlagExternal);
+      break;
+
+    case 4:
+      if (IsAdded)
+      {
+        cnt--;
+        Flag = 0;
+        FlagExternal = 0;
+        IsAdded = false;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
+      }
+      else
+      {
+        Flag = 0;
+        FlagExternal = 0;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
+      }
+    }
+  }
+
+  if (FlagExternal == 2)
+  {
+    switch (Flag)
+    {
+    case 0:
+    case 3:
+      cnt--;
+      FlagExternal = 4;
+      IsAdded = false;
+      Serial.println("Internal Flag:");
+      Serial.println(Flag);
+      Serial.println("Is added?");
+      Serial.println(IsAdded);
+      Serial.println("Flag External:");
+      Serial.println(FlagExternal);
+      break;
+    case 4:
+      if (IsAdded)
+      {
+        cnt--;
+        Flag = 0;
+        FlagExternal = 0;
+        IsAdded = false;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
+      }
+      else
+      {
+        Flag = 0;
+        FlagExternal = 0;
+        Serial.println("Internal Flag:");
+        Serial.println(Flag);
+        Serial.println("Is added?");
+        Serial.println(IsAdded);
+        Serial.println("Flag External:");
+        Serial.println(FlagExternal);
+        break;
+      }
+    }
+  }
 }
