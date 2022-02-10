@@ -92,6 +92,7 @@ unsigned long lastChangeInLoop;
 
 //
 bool IsAdded;
+bool IsFalsePositiveFromExtDevice;
 
 void setup()
 {
@@ -268,8 +269,18 @@ void loop()
     case 3:
       if (IsAdded)
       {
-        Flag = 0;
-        FlagExternal = 0;
+        if (IsFalsePositiveFromExtDevice)
+        {
+          cnt++ Flag = 0;
+          FlagExternal = 0;
+          IsAdded = true;
+          IsFalsePositiveFromExtDevice = false;
+        }
+        else
+        {
+          Flag = 0;
+          FlagExternal = 0;
+        }
       }
       else
       {
@@ -643,28 +654,19 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
     // if nobody anywhere lets check if an exit or entry has happened
     if ((LeftPreviousStatus == NOBODY) && (RightPreviousStatus == NOBODY))
     {
-
+      int checkIfNoClassification;
       // check exit or entry only if PathTrackFillingSize is 4 (for example 0 1 3 2) and last event is 0 (nobobdy anywhere)
       if (PathTrackFillingSize == 4)
       {
-        if (PathTrack[0])
-        {
-          Serial.println("false positive inside pathtrack[0]?");
-        }
-
-        if (!((PathTrack[1] == 1) && (PathTrack[2] == 3) && (PathTrack[3] == 2)))
-        {
-          Serial.println("false positive inside pathtrack[0]? in loop with !PathTrack for !1,!2,!3");
-        }
 
         // check exit or entry. no need to check PathTrack[0] == 0 , it is always the case
-        Serial.println("false positive?");
         if ((PathTrack[1] == 1) && (PathTrack[2] == 3) && (PathTrack[3] == 2))
         {
           // this is an entry
           Serial.println("Entering");
           FlagForFlow(1);
           ws.printfAll("1");
+          checkIfNoClassification = 1;
         }
         else if ((PathTrack[1] == 2) && (PathTrack[2] == 3) && (PathTrack[3] == 1))
         {
@@ -672,6 +674,14 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
           Serial.println("Exiting");
           FlagForFlow(2);
           ws.printfAll("2");
+          checkIfNoClassification = 2;
+        }
+
+        if (checkIfNoClassification != 1 || checkIfNoClassification != 2)
+        {
+          ws.printfAll("0");
+          checkIfNoClassification = 0;
+          Serial.println("no classification! false-positive");
         }
       }
       for (int i = 0; i < 4; i++)
@@ -860,6 +870,12 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
   }
   break;
   case WStype_TEXT:
+
+    if (payload[0] == '0')
+    {
+      Serial.println("External Device Sent: false-positive");
+      IsFalsePositiveFromExtDevice = true;
+    }
     // 1 IS SOMEONE ENETERD
     if (payload[0] == '1')
     {
