@@ -202,7 +202,7 @@ void setup()
   Serial.println("HTTP server started");
 
   // server address, port and URL
-  webSocket.begin("192.168.0.115", 80, "/ws");
+  webSocket.begin("192.168.0.171", 80, "/ws");
 
   // event handler
   webSocket.onEvent(webSocketEvent);
@@ -708,15 +708,29 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
           Serial.println("Exiting");
           FlagForFlow(2);
           ws.printfAll("2");
-          checkIfNoClassification = 2;
+          //should be 2 instead of 22, but strange behaviour occurs
+          checkIfNoClassification = 22;
         }
-
-        if (checkIfNoClassification != 1 || checkIfNoClassification != 2)
+        if (checkIfNoClassification != 1)
         {
-          ws.printfAll("0");
-          checkIfNoClassification = 0;
-          Serial.println("no classification! false-positive");
+          //should be 2 instead of 22, but strange behaviour occurs
+          if (checkIfNoClassification != 22)
+          {
+            ws.printfAll("0");
+            checkIfNoClassification = 0;
+            Serial.println("no classification! false-positive");
+          }
         }
+        Serial.println(checkIfNoClassification);
+        //if (checkIfNoClassification != 2)
+        //{
+        //  ws.printfAll("0");
+        //  checkIfNoClassification = 0;
+        //  Serial.println("no classification! false-positive");
+        //}
+        //Serial.println(String(checkIfNoClassification));
+        checkIfNoClassification = 0;
+        Serial.println(checkIfNoClassification);
       }
       for (int i = 0; i < 4; i++)
       {
