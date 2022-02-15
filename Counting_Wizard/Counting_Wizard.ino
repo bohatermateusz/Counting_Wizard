@@ -271,7 +271,8 @@ void loop()
       {
         if (IsFalsePositiveFromExtDevice)
         {
-          cnt++ Flag = 0;
+          cnt++;
+          Flag = 3;
           FlagExternal = 0;
           IsAdded = true;
           IsFalsePositiveFromExtDevice = false;
@@ -306,8 +307,19 @@ void loop()
     case 3:
       if (IsAdded)
       {
-        Flag = 0;
-        FlagExternal = 0;
+        if (IsFalsePositiveFromExtDevice)
+        {
+          cnt++;
+          Flag = 0;
+          FlagExternal = 3;
+          IsAdded = true;
+          IsFalsePositiveFromExtDevice = false;
+        }
+        else
+        {
+          Flag = 0;
+          FlagExternal = 0;
+        }
       }
       else
       {
@@ -332,17 +344,28 @@ void loop()
       break;
 
     case 4:
-      if (IsAdded)
+      if (!IsAdded)
+      {
+        if (IsFalsePositiveFromExtDevice)
+        {
+          cnt--;
+          Flag = 4;
+          FlagExternal = 0;
+          IsAdded = false;
+          IsFalsePositiveFromExtDevice = false;
+        }
+        else
+        {
+          Flag = 0;
+          FlagExternal = 0;
+        }
+      }
+      else
       {
         cnt--;
         Flag = 0;
         FlagExternal = 0;
         IsAdded = false;
-      }
-      else
-      {
-        Flag = 0;
-        FlagExternal = 0;
       }
       break;
     }
@@ -359,17 +382,28 @@ void loop()
       IsAdded = false;
       break;
     case 4:
-      if (IsAdded)
+      if (!IsAdded)
+      {
+        if (IsFalsePositiveFromExtDevice)
+        {
+          cnt--;
+          Flag = 0;
+          FlagExternal = 4;
+          IsAdded = false;
+          IsFalsePositiveFromExtDevice = false;
+        }
+        else
+        {
+          Flag = 0;
+          FlagExternal = 0;
+        }
+      }
+      else
       {
         cnt--;
         Flag = 0;
         FlagExternal = 0;
         IsAdded = false;
-      }
-      else
-      {
-        Flag = 0;
-        FlagExternal = 0;
       }
       break;
     }
