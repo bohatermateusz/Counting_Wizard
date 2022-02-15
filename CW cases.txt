@@ -1,0 +1,12 @@
+przejscie 1 ok, przejscie 2 ok, y
+przejscie 2 ok, przejscie 1 ok, y
+przejscie 1 ok, przejscie 2 nie ok - nie wiadomo kiedy przestawic na 0 (brak odczytu)
+przejscie 2 ok, przejscie 1 nie ok - nie wiadomo kiedy przestawic na 0 (brak odczytu)
+
+przejscie 1 potem znowu przejscie 1
+przejscie 2 potem znowu przejscie 2
+
+dla mijania sie w przejsciu
+
+
+przypadek kiedy 1 enter a po dlugim czasie na drugim urzadzeniu też enter
