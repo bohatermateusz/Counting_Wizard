@@ -201,7 +201,7 @@ void setup()
   Serial.println("HTTP server started");
 
   // server address, port and URL
-  webSocket.begin("192.168.0.115", 80, "/ws");
+  webSocket.begin("192.168.4.1", 80, "/ws");
 
   // event handler
   webSocket.onEvent(webSocketEvent);
