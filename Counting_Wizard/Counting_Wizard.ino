@@ -240,7 +240,7 @@ void loop()
     ESP.restart();
   }
 
-  ProcessData();
+  // ProcessData();
 
   uint16_t distance;
 
