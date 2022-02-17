@@ -32,6 +32,21 @@
   box-shadow: 0 9px #999;
 }
 
+.buttonOrange {
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #ff7e06;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
 .submissionfield { width: 90px; height: 390px; border: 1px solid #999999; padding: 5px; }
 
 .button:hover {background-color: #3e8e41}
@@ -46,6 +61,16 @@
 
 .buttonRed:active {
   background-color: #f70707;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+
+
+.buttonOrange:hover {background-color: #ff7e06}
+
+.buttonOrange:active {
+  background-color: #ff7e06;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
@@ -70,6 +95,13 @@ p {
     width: 350px;
 }
 
+#newMinimumDistance
+{
+    height:100px;
+    font-size:25pt;
+    width: 350px;
+}
+
 #ReadNewNumber
 {
     height:50px;
@@ -78,6 +110,13 @@ p {
 }
 
 #ReadNewLimit
+{
+    height:50px;
+    font-size:15pt;
+    width: 100px;
+}
+
+#ReadNewMinDistance
 {
     height:50px;
     font-size:15pt;
@@ -102,6 +141,12 @@ p {
 <button class="buttonRed" onclick="SetNewLimit()">Ustaw limit</button>
 <label for="fname" style="font-size:20px" >Aktualny limit:</label>
 <input type="number" id="ReadNewLimit" name="fname" readonly="readonly" ><br>
+<br>
+<input type="number" id="newMinimumDistance" name="fname"><br>
+<br>
+<button class="buttonOrange" onclick="SetNewMinDistance()">Ignoruj wybrany dystans</button>
+<label for="fname" style="font-size:20px" >Aktualny minimalny dystans:</label>
+<input type="number" id="ReadNewMinDistance" name="fname" readonly="readonly" ><br>
 </body>
 </html>
 <script>
@@ -110,6 +155,7 @@ setInterval(function() {
 	  // Gets ADC value at every half second
 	  GetLimit();
 	  GetPeople();
+    GetMinDistance();
 	}, 500);
 
 var xhttp = new XMLHttpRequest();
@@ -136,6 +182,24 @@ function SetNewLimit() {
   var URL = `/setNewLimit?number= ${newLimit}`;
   xhttp.open("POST", URL, true);
   xhttp.send();
+}
+
+function SetNewMinDistance() {
+  let newMinDistance = document.getElementById('newMinDistance').value
+  var URL = `/setNewMinDistance?number= ${newMinDistance}`;
+  xhttp.open("POST", URL, true);
+  xhttp.send();
+}
+
+function GetMinDistance() {
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       // Typical action to be performed when the document is ready:
+       document.getElementById("ReadNewMinDistance").value = xhttp.responseText;
+    }
+};
+xhttp.open("GET", "/readMinDistance", false);
+xhttp.send();
 }
 
 function GetLimit() {
