@@ -185,7 +185,7 @@ function SetNewLimit() {
 }
 
 function SetNewMinDistance() {
-  let newMinDistance = document.getElementById('newMinDistance').value
+  let newMinDistance = document.getElementById('newMinimumDistance').value
   var URL = `/setNewMinDistance?number= ${newMinDistance}`;
   xhttp.open("POST", URL, true);
   xhttp.send();
@@ -198,7 +198,7 @@ function GetMinDistance() {
        document.getElementById("ReadNewMinDistance").value = xhttp.responseText;
     }
 };
-xhttp.open("GET", "/readMinDistance", false);
+xhttp.open("GET", "/getNewMinDistance", false);
 xhttp.send();
 }
 
