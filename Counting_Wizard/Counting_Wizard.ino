@@ -93,6 +93,7 @@ unsigned long lastChangeInLoop;
 
 //
 bool IsAdded;
+uint16_t distance;
 
 void setup()
 {
@@ -192,7 +193,7 @@ void setup()
 
   server.on("/getNewLimit", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(getLimit())); });
-  
+
   server.on("/setNewMinDistance", HTTP_POST, [](AsyncWebServerRequest *request)
             {
               String arg = request->arg("number");
@@ -203,6 +204,9 @@ void setup()
 
   server.on("/getNewMinDistance", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(getNewMinDistance())); });
+
+  server.on("/getDistance", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", String(getDistance())); });
 
   // attach AsyncWebSocket
   ws.onEvent(onEvent);
@@ -234,11 +238,15 @@ String getLimit()
   return limitAsString;
 }
 
-
-
 String getNewMinDistance()
 {
   String newMinDistanceAsString = String(newMinDistance);
+  return newMinDistanceAsString;
+}
+
+String getDistance()
+{
+  String newMinDistanceAsString = String(distance);
   return newMinDistanceAsString;
 }
 
@@ -262,7 +270,7 @@ void loop()
 
   // ProcessData();
 
-  uint16_t distance;
+  
 
   distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
   delay(50);

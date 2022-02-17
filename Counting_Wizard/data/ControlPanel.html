@@ -122,6 +122,13 @@ p {
     font-size:15pt;
     width: 100px;
 }
+
+#ReadDistance
+{
+    height:50px;
+    font-size:15pt;
+    width: 100px;
+}
 </style>
 </head>
 <body>
@@ -147,6 +154,9 @@ p {
 <button class="buttonOrange" onclick="SetNewMinDistance()">Ignoruj wybrany dystans</button>
 <label for="fname" style="font-size:20px" >Aktualny minimalny dystans:</label>
 <input type="number" id="ReadNewMinDistance" name="fname" readonly="readonly" ><br>
+<br>
+<label for="fname" style="font-size:20px" >Aktualny dystans:</label>
+<input type="number" id="ReadDistance" name="fname" readonly="readonly" ><br>
 </body>
 </html>
 <script>
@@ -156,6 +166,7 @@ setInterval(function() {
 	  GetLimit();
 	  GetPeople();
     GetMinDistance();
+    GetDistance();
 	}, 500);
 
 var xhttp = new XMLHttpRequest();
@@ -199,6 +210,17 @@ function GetMinDistance() {
     }
 };
 xhttp.open("GET", "/getNewMinDistance", false);
+xhttp.send();
+}
+
+function GetDistance() {
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       // Typical action to be performed when the document is ready:
+       document.getElementById("ReadDistance").value = xhttp.responseText;
+    }
+};
+xhttp.open("GET", "/getDistance", false);
 xhttp.send();
 }
 
