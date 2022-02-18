@@ -64,6 +64,7 @@ static int ROI_width = 0;
 
 int cnt = 0;
 int limit = 5;
+int newMinDistance = 30;
 
 float sum_zone_0;
 float sum_zone_1;
@@ -92,6 +93,7 @@ unsigned long lastChangeInLoop;
 
 //
 bool IsAdded;
+uint16_t distance;
 
 void setup()
 {
@@ -192,6 +194,20 @@ void setup()
   server.on("/getNewLimit", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(getLimit())); });
 
+  server.on("/setNewMinDistance", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
+              String arg = request->arg("number");
+              Serial.print("New MinDistance is: ");
+              Serial.println(newMinDistance);
+              newMinDistance = arg.toInt();
+              request->send(200); });
+
+  server.on("/getNewMinDistance", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", String(getNewMinDistance())); });
+
+  server.on("/getDistance", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", String(getDistance())); });
+
   // attach AsyncWebSocket
   ws.onEvent(onEvent);
   server.addHandler(&ws);
@@ -222,6 +238,18 @@ String getLimit()
   return limitAsString;
 }
 
+String getNewMinDistance()
+{
+  String newMinDistanceAsString = String(newMinDistance);
+  return newMinDistanceAsString;
+}
+
+String getDistance()
+{
+  String newMinDistanceAsString = String(distance);
+  return newMinDistanceAsString;
+}
+
 void loop()
 {
   ProcessData();
@@ -242,7 +270,7 @@ void loop()
 
   // ProcessData();
 
-  uint16_t distance;
+  
 
   distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
   delay(50);
@@ -474,7 +502,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
   int AnEventHasOccured = 0;
 
   // minium distance set to 120 to limit door opening and closing
-  if (Distance < DIST_THRESHOLD_MAX[Zone] && Distance > 30)
+  if (Distance < DIST_THRESHOLD_MAX[Zone] && Distance > newMinDistance)
   {
     CurrentZoneStatus = SOMEONE;
   }
