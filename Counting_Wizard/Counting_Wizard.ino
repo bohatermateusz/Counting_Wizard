@@ -62,7 +62,7 @@ static int PplCounter = 0;
 static int ROI_height = 0;
 static int ROI_width = 0;
 
-int cnt = 0;
+int cnt;
 int limit = 5;
 int newMinDistance = 30;
 
@@ -101,13 +101,16 @@ int addr = 0;
 byte value;
 //
 uint8_t adres[2] = {0, 2};
+//
+#define EEPROM_SIZE 8
 
 void setup()
 {
   Wire.begin();
   Serial.begin(115200);
   // EEPROM
-  EEPROM.begin(512);
+  EEPROM.begin(4096);
+  delay(100);
   // samplingInterval.start(375, AsyncDelay::MILLIS);
   for (uint8_t t = 4; t > 0; t--)
   {
@@ -240,14 +243,10 @@ void setup()
   webSocket.enableHeartbeat(15000, 3000, 2);
   Serial.println("webSocket Client started");
 
-  // EEPROM Read
-  // cnt = EEPROM.read(addr);
-  // Serial.print(addr);
-  // Serial.print("\t");
-  // Serial.print(value, DEC);
-
-  EEPROM.get(adres[0], cnt);
-  EEPROM.get(adres[1], newMinDistance);
+  if (EEPROM.read(0) == 1){
+  cnt = EEPROM.read(1);
+  newMinDistance = EEPROM.read(2);
+  }
 }
 
 String getLimit()
@@ -272,22 +271,12 @@ void loop()
 {
   ProcessData();
 
-  // EEPROM Write
-  // EEPROM.write(addr, cnt);
-  // addr = addr + 1;
-  // if (addr == 512) {
-  //   addr = 0;
-  //   if (EEPROM.commit()) {
-  //     Serial.println("EEPROM successfully committed");
-  //   } else {
-  //     Serial.println("ERROR! EEPROM commit failed");
-  //   }
-  // }
-  //
-
-  EEPROM.put(adres[0], cnt);
-  EEPROM.put(adres[1], newMinDistance);
-
+  //EEPROM to save counting and min Distance values
+  EEPROM.write(0, 1);
+  EEPROM.write(1, cnt);
+  EEPROM.write(2, newMinDistance);
+  EEPROM.commit();
+  
   webSocket.loop();
   DNS.processNextRequest();
 
