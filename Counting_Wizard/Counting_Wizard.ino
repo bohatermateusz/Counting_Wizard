@@ -95,10 +95,17 @@ unsigned long lastChangeInLoop;
 bool IsAdded;
 uint16_t distance;
 
+//EEPROM
+#include <EEPROM.h>
+int addr = 0;
+byte value;
+
 void setup()
 {
   Wire.begin();
   Serial.begin(115200);
+  //EEPROM
+  EEPROM.begin(512);
   // samplingInterval.start(375, AsyncDelay::MILLIS);
   for (uint8_t t = 4; t > 0; t--)
   {
@@ -230,6 +237,13 @@ void setup()
   // consider connection disconnected if pong is not received 2 times
   webSocket.enableHeartbeat(15000, 3000, 2);
   Serial.println("webSocket Client started");
+
+  //EEPROM Read
+  value = EEPROM.read(addr);
+  Serial.print(addr);
+  Serial.print("\t");
+  Serial.print(value, DEC);
+  Serial.println();
 }
 
 String getLimit()
@@ -253,8 +267,26 @@ String getDistance()
 void loop()
 {
   ProcessData();
+  
+  //EEPROM Write
+  EEPROM.write(addr, cnt);
+  addr = addr + 1;
+  if (addr == 512) {
+    addr = 0;
+    if (EEPROM.commit()) {
+      Serial.println("EEPROM successfully committed");
+    } else {
+      Serial.println("ERROR! EEPROM commit failed");
+    }
+  }
+  //
+
+
+
+  
   webSocket.loop();
   DNS.processNextRequest();
+  
 
   // check button status
   val = digitalRead(inPin); // read input value
