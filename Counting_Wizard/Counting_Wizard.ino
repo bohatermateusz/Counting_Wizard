@@ -104,6 +104,8 @@ uint8_t adres[2] = {0, 2};
 //
 #define EEPROM_SIZE 8
 
+string IPAdressOfExternalDevice = "192.168.0.115";
+
 void setup()
 {
   Wire.begin();
@@ -229,7 +231,7 @@ void setup()
   Serial.println("HTTP server started");
 
   // server address, port and URL
-  webSocket.begin("192.168.0.115", 80, "/ws");
+  webSocket.begin(IPAdressOfExternalDevice, 80, "/ws");
 
   // event handler
   webSocket.onEvent(webSocketEvent);
@@ -243,9 +245,11 @@ void setup()
   webSocket.enableHeartbeat(15000, 3000, 2);
   Serial.println("webSocket Client started");
 
-  if (EEPROM.read(0) == 1){
-  cnt = EEPROM.read(1);
-  newMinDistance = EEPROM.read(2);
+  if (EEPROM.read(0) == 1)
+  {
+    cnt = EEPROM.read(1);
+    newMinDistance = EEPROM.read(2);
+    IPAdressOfExternalDevice = readStringFromEEPROM(3);
   }
 }
 
@@ -271,12 +275,13 @@ void loop()
 {
   ProcessData();
 
-  //EEPROM to save counting and min Distance values
+  // EEPROM to save counting and min Distance values
   EEPROM.write(0, 1);
   EEPROM.write(1, cnt);
   EEPROM.write(2, newMinDistance);
-  EEPROM.commit();
-  
+  writeStringToEEPROM(3, IPAdressOfExternalDevice)
+      EEPROM.commit();
+
   webSocket.loop();
   DNS.processNextRequest();
 
@@ -842,6 +847,28 @@ void FlagForFlow(int flag)
 void FlagForFlowExternalDevice(int flag)
 {
   FlagExternal = flag;
+}
+
+void writeStringToEEPROM(int addrOffset, const String &strToWrite)
+{
+  byte len = strToWrite.length();
+  EEPROM.write(addrOffset, len);
+  for (int i = 0; i < len; i++)
+  {
+    EEPROM.write(addrOffset + 1 + i, strToWrite[i]);
+  }
+}
+
+String readStringFromEEPROM(int addrOffset)
+{
+  int newStrLen = EEPROM.read(addrOffset);
+  char data[newStrLen + 1];
+  for (int i = 0; i < newStrLen; i++)
+  {
+    data[i] = EEPROM.read(addrOffset + 1 + i);
+  }
+  data[newStrLen] = '\0'; // !!! NOTE !!! Remove the space between the slash "/" and "0" (I've added a space because otherwise there is a display bug)
+  return String(data);
 }
 
 void ProcessData()
