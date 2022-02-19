@@ -95,16 +95,18 @@ unsigned long lastChangeInLoop;
 bool IsAdded;
 uint16_t distance;
 
-//EEPROM
+// EEPROM
 #include <EEPROM.h>
 int addr = 0;
 byte value;
+//
+uint8_t adres[2] = {0, 2};
 
 void setup()
 {
   Wire.begin();
   Serial.begin(115200);
-  //EEPROM
+  // EEPROM
   EEPROM.begin(512);
   // samplingInterval.start(375, AsyncDelay::MILLIS);
   for (uint8_t t = 4; t > 0; t--)
@@ -238,12 +240,14 @@ void setup()
   webSocket.enableHeartbeat(15000, 3000, 2);
   Serial.println("webSocket Client started");
 
-  //EEPROM Read
-  value = EEPROM.read(addr);
-  Serial.print(addr);
-  Serial.print("\t");
-  Serial.print(value, DEC);
-  Serial.println();
+  // EEPROM Read
+  // cnt = EEPROM.read(addr);
+  // Serial.print(addr);
+  // Serial.print("\t");
+  // Serial.print(value, DEC);
+
+  EEPROM.get(adres[0], cnt);
+  EEPROM.get(adres[1], newMinDistance);
 }
 
 String getLimit()
@@ -267,26 +271,25 @@ String getDistance()
 void loop()
 {
   ProcessData();
-  
-  //EEPROM Write
-  EEPROM.write(addr, cnt);
-  addr = addr + 1;
-  if (addr == 512) {
-    addr = 0;
-    if (EEPROM.commit()) {
-      Serial.println("EEPROM successfully committed");
-    } else {
-      Serial.println("ERROR! EEPROM commit failed");
-    }
-  }
+
+  // EEPROM Write
+  // EEPROM.write(addr, cnt);
+  // addr = addr + 1;
+  // if (addr == 512) {
+  //   addr = 0;
+  //   if (EEPROM.commit()) {
+  //     Serial.println("EEPROM successfully committed");
+  //   } else {
+  //     Serial.println("ERROR! EEPROM commit failed");
+  //   }
+  // }
   //
 
+  EEPROM.put(adres[0], cnt);
+  EEPROM.put(adres[1], newMinDistance);
 
-
-  
   webSocket.loop();
   DNS.processNextRequest();
-  
 
   // check button status
   val = digitalRead(inPin); // read input value
@@ -301,8 +304,6 @@ void loop()
   }
 
   // ProcessData();
-
-  
 
   distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
   delay(50);
