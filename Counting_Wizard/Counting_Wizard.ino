@@ -241,8 +241,18 @@ void setup()
   server.begin();
   Serial.println("HTTP server started");
 
+  // Read EEPROM
+  if (EEPROM.read(0) == 1)
+  {
+    cnt = EEPROM.read(1);
+    newMinDistance = EEPROM.read(2);
+    IPAdressOfExternalDevice = readStringFromEEPROM(3);
+  }
+
+   String IPTrimmed = IPAdressOfExternalDevice;
+   IPTrimmed.trim();
   // server address, port and URL
-  webSocket.begin(IPAdressOfExternalDevice, 80, "/ws");
+  webSocket.begin(IPTrimmed, 80, "/ws");
 
   // event handler
   webSocket.onEvent(webSocketEvent);
@@ -255,13 +265,6 @@ void setup()
   // consider connection disconnected if pong is not received 2 times
   webSocket.enableHeartbeat(15000, 3000, 2);
   Serial.println("webSocket Client started");
-
-  if (EEPROM.read(0) == 1)
-  {
-    cnt = EEPROM.read(1);
-    newMinDistance = EEPROM.read(2);
-    IPAdressOfExternalDevice = readStringFromEEPROM(3);
-  }
 }
 
 String getLimit()
@@ -295,7 +298,7 @@ void loop()
 
   webSocket.loop();
   DNS.processNextRequest();
-
+  Serial.println(IPAdressOfExternalDevice);
   // check button status
   val = digitalRead(inPin); // read input value
   if (val != HIGH)
