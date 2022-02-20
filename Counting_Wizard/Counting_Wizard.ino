@@ -104,7 +104,7 @@ uint8_t adres[2] = {0, 2};
 //
 #define EEPROM_SIZE 8
 
-string IPAdressOfExternalDevice = "192.168.0.115";
+String IPAdressOfExternalDevice;
 
 void setup()
 {
@@ -222,6 +222,17 @@ void setup()
   server.on("/getDistance", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(getDistance())); });
 
+  server.on("/setExternalIPAdress", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
+              String arg = request->arg("string");
+              Serial.print("New External IP adress is: ");
+              Serial.println(IPAdressOfExternalDevice);
+              IPAdressOfExternalDevice = arg;
+              request->send(200); });
+
+  server.on("/getExternalIPAdress", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", String(IPAdressOfExternalDevice)); });
+
   // attach AsyncWebSocket
   ws.onEvent(onEvent);
   server.addHandler(&ws);
@@ -279,8 +290,8 @@ void loop()
   EEPROM.write(0, 1);
   EEPROM.write(1, cnt);
   EEPROM.write(2, newMinDistance);
-  writeStringToEEPROM(3, IPAdressOfExternalDevice)
-      EEPROM.commit();
+  writeStringToEEPROM(3, IPAdressOfExternalDevice);
+  EEPROM.commit();
 
   webSocket.loop();
   DNS.processNextRequest();
