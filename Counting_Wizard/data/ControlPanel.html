@@ -158,9 +158,12 @@ p {
 <label for="fname" style="font-size:20px" >Aktualny dystans:</label>
 <input type="number" id="ReadDistance" name="fname" readonly="readonly" ><br>
 <br>
-<label for="fname" style="font-size:20px" >Numer IP do drugiego urzadzenia:</label>
-<input type="string" id="GetExtIP" name="fname"><br>
-<button class="buttonOrange" onclick="SetNewIP()">Zapisz IP</button>
+<label for="fname" style="font-size:20px"  >Aktualny numer IP do drugiego urzadzenia:</label>
+<input type="number" id="GetExtIP" name="fname" readonly="readonly"><br>
+<br>
+<label for="fname" style="font-size:20px" >Nowy numer IP:</label>
+<input type="number" id="SetExtIP" name="fname"><br><br>
+<button class="buttonOrange" onclick="SetNewIP()">Zapisz IP</button><br>
 </body>
 </html>
 <script>
@@ -171,6 +174,7 @@ setInterval(function() {
 	  GetPeople();
     GetMinDistance();
     GetDistance();
+    GetExtIP();
 	}, 500);
 
 var xhttp = new XMLHttpRequest();
@@ -207,7 +211,7 @@ function SetNewMinDistance() {
 }
 
 function SetNewIP() {
-  let newIP = document.getElementById('GetExtIP').value
+  let newIP = document.getElementById('SetExtIP').value
   var URL = `/setExternalIPAdress?string= ${newIP}`;
   xhttp.open("POST", URL, true);
   xhttp.send();

@@ -106,6 +106,8 @@ uint8_t adres[2] = {0, 2};
 
 String IPAdressOfExternalDevice;
 
+bool IsConnected;
+
 void setup()
 {
   Wire.begin();
@@ -298,7 +300,6 @@ void loop()
 
   webSocket.loop();
   DNS.processNextRequest();
-  Serial.println(IPAdressOfExternalDevice);
   // check button status
   val = digitalRead(inPin); // read input value
   if (val != HIGH)
@@ -803,11 +804,12 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
   {
   case WStype_DISCONNECTED:
     USE_SERIAL.printf("[WSc] Disconnected!\n");
+    IsConnected = false;
     break;
   case WStype_CONNECTED:
   {
     USE_SERIAL.printf("[WSc] Connected to url: %s\n", payload);
-
+    IsConnected = true;
     // send message to server when Connected
     webSocket.sendTXT("Connected");
   }
