@@ -107,6 +107,7 @@ uint8_t adres[2] = {0, 2};
 String IPAdressOfExternalDevice;
 
 bool IsConnected;
+bool IsResetDevice;
 
 void setup()
 {
@@ -230,7 +231,8 @@ void setup()
               Serial.print("New External IP adress is: ");
               Serial.println(IPAdressOfExternalDevice);
               IPAdressOfExternalDevice = arg;
-              request->send(200); });
+              request->send(200);
+              IsResetDevice = true; });
 
   server.on("/getExternalIPAdress", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(IPAdressOfExternalDevice)); });
@@ -300,6 +302,10 @@ void loop()
   EEPROM.write(2, newMinDistance);
   writeStringToEEPROM(3, IPAdressOfExternalDevice);
   EEPROM.commit();
+  if (IsResetDevice == true)
+  {
+    ESP.restart();
+  }
 
   webSocket.loop();
   DNS.processNextRequest();
