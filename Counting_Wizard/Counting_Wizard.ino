@@ -235,6 +235,9 @@ void setup()
   server.on("/getExternalIPAdress", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(IPAdressOfExternalDevice)); });
 
+  server.on("/ExternalDeviceConnectionStatus", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", String(IsConnected)); });
+
   // attach AsyncWebSocket
   ws.onEvent(onEvent);
   server.addHandler(&ws);
@@ -251,8 +254,8 @@ void setup()
     IPAdressOfExternalDevice = readStringFromEEPROM(3);
   }
 
-   String IPTrimmed = IPAdressOfExternalDevice;
-   IPTrimmed.trim();
+  String IPTrimmed = IPAdressOfExternalDevice;
+  IPTrimmed.trim();
   // server address, port and URL
   webSocket.begin(IPTrimmed, 80, "/ws");
 

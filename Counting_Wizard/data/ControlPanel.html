@@ -159,10 +159,13 @@ p {
 <input type="number" id="ReadDistance" name="fname" readonly="readonly" ><br>
 <br>
 <label for="fname" style="font-size:20px"  >Aktualny numer IP do drugiego urzadzenia:</label>
-<input type="number" id="GetExtIP" name="fname" readonly="readonly"><br>
+<input type="string" id="GetExtIP" name="fname" readonly="readonly">
+<input type="string" id="ExternalDeviceConnectionStatus" name="fname" readonly="readonly"><br>
+<br>
 <br>
 <label for="fname" style="font-size:20px" >Nowy numer IP:</label>
-<input type="number" id="SetExtIP" name="fname"><br><br>
+<input type="string" id="SetExtIP" name="fname">
+<br><br>
 <button class="buttonOrange" onclick="SetNewIP()">Zapisz IP</button><br>
 </body>
 </html>
@@ -175,6 +178,7 @@ setInterval(function() {
     GetMinDistance();
     GetDistance();
     GetExtIP();
+    GetExtDeviceConnectionStatus();
 	}, 500);
 
 var xhttp = new XMLHttpRequest();
@@ -269,6 +273,23 @@ function GetExtIP() {
     }
 };
 xhttp.open("GET", "/getExternalIPAdress", false);
+xhttp.send();
+}
+
+function GetExtDeviceConnectionStatus() {
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+       // Typical action to be performed when the document is ready:
+       if (xhttp.responseText == 0) {
+        document.getElementById("ExternalDeviceConnectionStatus").value = "Disconected"
+       }
+       if (xhttp.responseText == 1) {
+        document.getElementById("ExternalDeviceConnectionStatus").value = "Conected"
+       }
+       //document.getElementById("GetExternalDeviceConnectionStatus").value = xhttp.responseText;
+    }
+};
+xhttp.open("GET", "/ExternalDeviceConnectionStatus", false);
 xhttp.send();
 }
     </script>
