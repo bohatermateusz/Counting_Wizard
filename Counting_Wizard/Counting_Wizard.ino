@@ -108,6 +108,7 @@ String IPAdressOfExternalDevice;
 
 bool IsConnected;
 bool IsResetDevice;
+bool IsEEPROMWrite;
 
 void setup()
 {
@@ -184,12 +185,14 @@ void setup()
             {
               Serial.print("Adding one person");
               cnt++;
+              IsEEPROMWrite = true;
               request->send(200); });
 
   server.on("/subtract", HTTP_POST, [](AsyncWebServerRequest *request)
             {
               Serial.print("Subtract one person");
               cnt--;
+              IsEEPROMWrite = true;
               request->send(200); });
 
   server.on("/set", HTTP_POST, [](AsyncWebServerRequest *request)
@@ -198,6 +201,7 @@ void setup()
               Serial.print("New people value is: ");
               Serial.println(arg);
               cnt = arg.toInt();
+              IsEEPROMWrite = true;
               request->send(200); });
 
   server.on("/setNewLimit", HTTP_POST, [](AsyncWebServerRequest *request)
@@ -217,6 +221,7 @@ void setup()
               Serial.print("New MinDistance is: ");
               Serial.println(newMinDistance);
               newMinDistance = arg.toInt();
+              IsEEPROMWrite = true;
               request->send(200); });
 
   server.on("/getNewMinDistance", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -232,6 +237,7 @@ void setup()
               Serial.println(IPAdressOfExternalDevice);
               IPAdressOfExternalDevice = arg;
               request->send(200);
+              IsEEPROMWrite = true;
               IsResetDevice = true; });
 
   server.on("/getExternalIPAdress", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -288,20 +294,26 @@ String getNewMinDistance()
 
 String getDistance()
 {
-  String newMinDistanceAsString = String(distance);
-  return newMinDistanceAsString;
+  String newDistanceAsString = String(distance);
+  return newDistanceAsString;
 }
 
 void loop()
 {
   ProcessData();
 
-  // EEPROM to save counting and min Distance values
-  EEPROM.write(0, 1);
-  EEPROM.write(1, cnt);
-  EEPROM.write(2, newMinDistance);
-  writeStringToEEPROM(3, IPAdressOfExternalDevice);
-  EEPROM.commit();
+  if (IsEEPROMWrite = true)
+  {
+    // EEPROM to save counting and min Distance values
+    // limit of people is not stored!
+    EEPROM.put(0, 1);
+    EEPROM.put(1, cnt);
+    EEPROM.put(2, newMinDistance);
+    writeStringToEEPROM(3, IPAdressOfExternalDevice);
+    EEPROM.commit();
+    IsEEPROMWrite = false;
+  }
+
   if (IsResetDevice == true)
   {
     ESP.restart();
@@ -877,10 +889,10 @@ void FlagForFlowExternalDevice(int flag)
 void writeStringToEEPROM(int addrOffset, const String &strToWrite)
 {
   byte len = strToWrite.length();
-  EEPROM.write(addrOffset, len);
+  EEPROM.put(addrOffset, len);
   for (int i = 0; i < len; i++)
   {
-    EEPROM.write(addrOffset + 1 + i, strToWrite[i]);
+    EEPROM.put(addrOffset + 1 + i, strToWrite[i]);
   }
 }
 
@@ -913,6 +925,7 @@ void ProcessData()
       Serial.println(IsAdded);
       Serial.println("Flag External:");
       Serial.println(FlagExternal);
+      IsEEPROMWrite = true;
       break;
     case 3:
       if (IsAdded)
@@ -939,6 +952,7 @@ void ProcessData()
         Serial.println(IsAdded);
         Serial.println("Flag External:");
         Serial.println(FlagExternal);
+        IsEEPROMWrite = true;
         break;
       }
     }
@@ -959,6 +973,7 @@ void ProcessData()
       Serial.println(IsAdded);
       Serial.println("Flag External:");
       Serial.println(FlagExternal);
+      IsEEPROMWrite = true;
       break;
     case 3:
       if (IsAdded)
@@ -985,6 +1000,7 @@ void ProcessData()
         Serial.println(IsAdded);
         Serial.println("Flag External:");
         Serial.println(FlagExternal);
+        IsEEPROMWrite = true;
         break;
       }
     }
@@ -1005,6 +1021,7 @@ void ProcessData()
       Serial.println(IsAdded);
       Serial.println("Flag External:");
       Serial.println(FlagExternal);
+      IsEEPROMWrite = true;
       break;
 
     case 4:
@@ -1020,6 +1037,7 @@ void ProcessData()
         Serial.println(IsAdded);
         Serial.println("Flag External:");
         Serial.println(FlagExternal);
+        IsEEPROMWrite = true;
         break;
       }
       else
@@ -1052,6 +1070,7 @@ void ProcessData()
       Serial.println(IsAdded);
       Serial.println("Flag External:");
       Serial.println(FlagExternal);
+      IsEEPROMWrite = true;
       break;
     case 4:
       if (IsAdded)
@@ -1066,6 +1085,7 @@ void ProcessData()
         Serial.println(IsAdded);
         Serial.println("Flag External:");
         Serial.println(FlagExternal);
+        IsEEPROMWrite = true;
         break;
       }
       else
