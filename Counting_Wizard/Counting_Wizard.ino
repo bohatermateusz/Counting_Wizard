@@ -88,8 +88,8 @@ int FlagLastChangeInLoop;
 unsigned long lastChangeInLoop;
 
 // Async Delay
-//#include <AsyncDelay.h>
-// AsyncDelay samplingInterval;
+#include <AsyncDelay.h>
+AsyncDelay samplingInterval;
 
 //
 bool IsAdded;
@@ -117,7 +117,9 @@ void setup()
   // EEPROM
   EEPROM.begin(4096);
   delay(100);
-  // samplingInterval.start(375, AsyncDelay::MILLIS);
+
+  samplingInterval.start(10800000, AsyncDelay::MILLIS);
+
   for (uint8_t t = 4; t > 0; t--)
   {
     USE_SERIAL.printf("[SETUP] BOOT WAIT %d...\n", t);
@@ -316,6 +318,13 @@ void loop()
 
   if (IsResetDevice == true)
   {
+    ESP.restart();
+  }
+
+  // reset device evry 3 hours
+  if (samplingInterval.isExpired())
+  {
+    samplingInterval.repeat();
     ESP.restart();
   }
 
