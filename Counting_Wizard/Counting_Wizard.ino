@@ -328,8 +328,6 @@ void loop()
     ESP.restart();
   }
 
-  webSocket.loop();
-  DNS.processNextRequest();
   // check button status
   val = digitalRead(inPin); // read input value
   if (val != HIGH)
@@ -365,6 +363,9 @@ void loop()
   //  FlagExternal = 0;
   //  samplingInterval.repeat();
   //}
+
+  webSocket.loop();
+  DNS.processNextRequest();
 }
 
 void zones_calibration()
