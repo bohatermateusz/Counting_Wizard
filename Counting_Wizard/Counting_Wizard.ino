@@ -63,7 +63,6 @@ static int ROI_height = 0;
 static int ROI_width = 0;
 
 int cnt;
-int limit = 5;
 int newMinDistance = 30;
 
 float sum_zone_0;
@@ -189,17 +188,6 @@ void setup()
               IsEEPROMWrite = true;
               request->send(200); });
 
-  server.on("/setNewLimit", HTTP_POST, [](AsyncWebServerRequest *request)
-            {
-              String arg = request->arg("number");
-              Serial.print("New limit is: ");
-              Serial.println(arg);
-              limit = arg.toInt();
-              request->send(200); });
-
-  server.on("/getNewLimit", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/plain", String(getLimit())); });
-
   server.on("/setNewMinDistance", HTTP_POST, [](AsyncWebServerRequest *request)
             {
               String arg = request->arg("number");
@@ -263,12 +251,6 @@ void setup()
   // consider connection disconnected if pong is not received 2 times
   webSocket.enableHeartbeat(15000, 3000, 2);
   Serial.println("webSocket Client started");
-}
-
-String getLimit()
-{
-  String limitAsString = String(limit);
-  return limitAsString;
 }
 
 String getNewMinDistance()
