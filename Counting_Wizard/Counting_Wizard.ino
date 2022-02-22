@@ -159,23 +159,6 @@ void setup()
   }
 
   // Configure Webserver
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/index.html", String(), false); });
-
-  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/style.css", "text/css"); });
-
-  server.on("/GaugeMeter.js", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/GaugeMeter.js", "text/css"); });
-
-  server.on("/jquery.min.js", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/jquery.min.js", "text/css"); });
-
-  server.on("/jquery-3.3.1.min.js", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/jquery-3.3.1.min.js", "text/css"); });
-
-  server.on("/knockout-min.js", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/knockout-min.js", "text/css"); });
 
   server.on("/getADC", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(handleADC())); });
