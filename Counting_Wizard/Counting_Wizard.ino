@@ -269,6 +269,20 @@ void loop()
 {
   ProcessData();
 
+  distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
+  delay(50);
+  distanceSensor.setTimingBudgetInMs(50);
+  distanceSensor.startRanging();           // Write configuration bytes to initiate measurement
+  distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
+  distanceSensor.stopRanging();
+
+  // Serial.println(distance);
+  //  inject the new ranged distance in the people counting algorithm
+  processPeopleCountingData(distance, Zone);
+
+  Zone++;
+  Zone = Zone % 2;
+
   if (IsEEPROMWrite = true)
   {
     // EEPROM to save counting and min Distance values
@@ -304,20 +318,6 @@ void loop()
     wifiManager.startConfigPortal("Counting_Wizard");
     ESP.restart();
   }
-
-  distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
-  delay(50);
-  distanceSensor.setTimingBudgetInMs(50);
-  distanceSensor.startRanging();           // Write configuration bytes to initiate measurement
-  distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
-  distanceSensor.stopRanging();
-
-  // Serial.println(distance);
-  //  inject the new ranged distance in the people counting algorithm
-  processPeopleCountingData(distance, Zone);
-
-  Zone++;
-  Zone = Zone % 2;
 
   webSocket.loop();
   DNS.processNextRequest();
