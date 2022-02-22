@@ -323,8 +323,6 @@ void loop()
     ESP.restart();
   }
 
-  // ProcessData();
-
   distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
   delay(50);
   distanceSensor.setTimingBudgetInMs(50);
@@ -338,14 +336,6 @@ void loop()
 
   Zone++;
   Zone = Zone % 2;
-
-  // Clean flag evry 375ms to cover example when one person enter and after long time second enter and only second counter catch that enter
-  // if (samplingInterval.isExpired())
-  //{
-  //  Flag = 0;
-  //  FlagExternal = 0;
-  //  samplingInterval.repeat();
-  //}
 
   webSocket.loop();
   DNS.processNextRequest();
@@ -372,8 +362,8 @@ void zones_calibration()
   delay(50);
   distanceSensor.setTimingBudgetInMs(50);
   distanceSensor.startRanging(); // Write configuration bytes to initiate measurement
-  Serial.println("Preheating Sensor - 10 seconds");
-  delay(10000);
+  Serial.println("Preheating Sensor - 1 seconds");
+  delay(1000);
   distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
   distanceSensor.stopRanging();
   Serial.println("Preheating Finished");
@@ -476,7 +466,7 @@ void zones_calibration()
   Serial.println(center[1]);
   Serial.println("Setting new ROIs");
 
-  delay(2000);
+  delay(500);
   // we will now repeat the calculations necessary to define the thresholds with the updated zones
   Zone = 0;
   sum_zone_0 = 0;
