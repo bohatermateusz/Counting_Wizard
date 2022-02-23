@@ -63,7 +63,8 @@ static int ROI_height = 0;
 static int ROI_width = 0;
 
 int cnt;
-int newMinDistance = 30;
+int limit = 5;
+int newMinDistance;
 
 float sum_zone_0;
 float sum_zone_1;
@@ -157,13 +158,8 @@ void setup()
     return;
   }
 
-  // Configure Webserver
-
   server.on("/getADC", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(handleADC())); });
-
-  server.on("/ControlPanel", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/ControlPanel.html", String(), false); });
 
   server.on("/add", HTTP_POST, [](AsyncWebServerRequest *request)
             {
@@ -225,7 +221,6 @@ void setup()
 
   // Start server
   server.begin();
-  Serial.println("HTTP server started");
 
   // Read EEPROM
   if (EEPROM.read(0) == 1)
@@ -253,6 +248,12 @@ void setup()
   Serial.println("webSocket Client started");
 }
 
+String getLimit()
+{
+  String limitAsString = String(limit);
+  return limitAsString;
+}
+
 String getNewMinDistance()
 {
   String newMinDistanceAsString = String(newMinDistance);
@@ -267,34 +268,6 @@ String getDistance()
 
 void loop()
 {
-  ProcessData();
-
-  distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
-  delay(50);
-  distanceSensor.setTimingBudgetInMs(50);
-  distanceSensor.startRanging();           // Write configuration bytes to initiate measurement
-  distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
-  distanceSensor.stopRanging();
-
-  // Serial.println(distance);
-  //  inject the new ranged distance in the people counting algorithm
-  processPeopleCountingData(distance, Zone);
-
-  Zone++;
-  Zone = Zone % 2;
-
-  if (IsEEPROMWrite = true)
-  {
-    // EEPROM to save counting and min Distance values
-    // limit of people is not stored!
-    EEPROM.put(0, 1);
-    EEPROM.put(1, cnt);
-    EEPROM.put(2, newMinDistance);
-    writeStringToEEPROM(3, IPAdressOfExternalDevice);
-    EEPROM.commit();
-    IsEEPROMWrite = false;
-  }
-
   if (IsResetDevice == true)
   {
     ESP.restart();
@@ -318,6 +291,29 @@ void loop()
     wifiManager.startConfigPortal("Counting_Wizard");
     ESP.restart();
   }
+
+  distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
+  delay(50);
+  distanceSensor.setTimingBudgetInMs(50);
+  distanceSensor.startRanging();           // Write configuration bytes to initiate measurement
+  distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
+  distanceSensor.stopRanging();
+
+  // Serial.println(distance);
+  //  inject the new ranged distance in the people counting algorithm
+  processPeopleCountingData(distance, Zone);
+  ProcessData();
+
+  Zone++;
+  Zone = Zone % 2;
+
+  // Clean flag evry 375ms to cover example when one person enter and after long time second enter and only second counter catch that enter
+  // if (samplingInterval.isExpired())
+  //{
+  //  Flag = 0;
+  //  FlagExternal = 0;
+  //  samplingInterval.repeat();
+  //}
 
   webSocket.loop();
   DNS.processNextRequest();
@@ -344,8 +340,8 @@ void zones_calibration()
   delay(50);
   distanceSensor.setTimingBudgetInMs(50);
   distanceSensor.startRanging(); // Write configuration bytes to initiate measurement
-  Serial.println("Preheating Sensor - 1 seconds");
-  delay(1000);
+  Serial.println("Preheating Sensor - 3 seconds");
+  delay(3000);
   distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
   distanceSensor.stopRanging();
   Serial.println("Preheating Finished");
@@ -448,7 +444,7 @@ void zones_calibration()
   Serial.println(center[1]);
   Serial.println("Setting new ROIs");
 
-  delay(500);
+  delay(1000);
   // we will now repeat the calculations necessary to define the thresholds with the updated zones
   Zone = 0;
   sum_zone_0 = 0;
