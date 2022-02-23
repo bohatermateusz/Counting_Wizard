@@ -249,12 +249,6 @@ void setup()
   Serial.println("webSocket Client started");
 }
 
-String getLimit()
-{
-  String limitAsString = String(limit);
-  return limitAsString;
-}
-
 String getNewMinDistance()
 {
   String newMinDistanceAsString = String(newMinDistance);
