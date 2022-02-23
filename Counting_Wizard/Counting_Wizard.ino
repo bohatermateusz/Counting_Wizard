@@ -118,6 +118,7 @@ void setup()
   EEPROM.begin(4096);
   delay(100);
 
+  // Timer set to 3hours - to restart device and calculate evry 3 hours
   samplingInterval.start(10800000, AsyncDelay::MILLIS);
 
   for (uint8_t t = 4; t > 0; t--)
@@ -306,14 +307,6 @@ void loop()
 
   Zone++;
   Zone = Zone % 2;
-
-  // Clean flag evry 375ms to cover example when one person enter and after long time second enter and only second counter catch that enter
-  // if (samplingInterval.isExpired())
-  //{
-  //  Flag = 0;
-  //  FlagExternal = 0;
-  //  samplingInterval.repeat();
-  //}
 
   webSocket.loop();
   DNS.processNextRequest();
