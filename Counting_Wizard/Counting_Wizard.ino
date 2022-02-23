@@ -166,14 +166,12 @@ void setup()
             {
               Serial.print("Adding one person");
               cnt++;
-              IsEEPROMWrite = true;
               request->send(200); });
 
   server.on("/subtract", HTTP_POST, [](AsyncWebServerRequest *request)
             {
               Serial.print("Subtract one person");
               cnt--;
-              IsEEPROMWrite = true;
               request->send(200); });
 
   server.on("/set", HTTP_POST, [](AsyncWebServerRequest *request)
@@ -182,7 +180,6 @@ void setup()
               Serial.print("New people value is: ");
               Serial.println(arg);
               cnt = arg.toInt();
-              IsEEPROMWrite = true;
               request->send(200); });
 
   server.on("/setNewMinDistance", HTTP_POST, [](AsyncWebServerRequest *request)
@@ -226,7 +223,6 @@ void setup()
   // Read EEPROM
   if (EEPROM.read(0) == 1)
   {
-    cnt = EEPROM.read(1);
     newMinDistance = EEPROM.read(2);
     IPAdressOfExternalDevice = readStringFromEEPROM(3);
   }
@@ -266,7 +262,6 @@ void loop()
   if (IsEEPROMWrite == true)
   {
     EEPROM.put(0, 1);
-    EEPROM.put(1, cnt);
     EEPROM.put(2, newMinDistance);
     writeStringToEEPROM(3, IPAdressOfExternalDevice);
     EEPROM.commit();
@@ -884,7 +879,6 @@ void ProcessData()
       Serial.println(IsAdded);
       Serial.println("Flag External:");
       Serial.println(FlagExternal);
-      IsEEPROMWrite = true;
       break;
     case 3:
       if (IsAdded)
@@ -911,7 +905,6 @@ void ProcessData()
         Serial.println(IsAdded);
         Serial.println("Flag External:");
         Serial.println(FlagExternal);
-        IsEEPROMWrite = true;
         break;
       }
     }
@@ -932,7 +925,6 @@ void ProcessData()
       Serial.println(IsAdded);
       Serial.println("Flag External:");
       Serial.println(FlagExternal);
-      IsEEPROMWrite = true;
       break;
     case 3:
       if (IsAdded)
@@ -959,7 +951,6 @@ void ProcessData()
         Serial.println(IsAdded);
         Serial.println("Flag External:");
         Serial.println(FlagExternal);
-        IsEEPROMWrite = true;
         break;
       }
     }
@@ -980,7 +971,6 @@ void ProcessData()
       Serial.println(IsAdded);
       Serial.println("Flag External:");
       Serial.println(FlagExternal);
-      IsEEPROMWrite = true;
       break;
 
     case 4:
@@ -996,7 +986,6 @@ void ProcessData()
         Serial.println(IsAdded);
         Serial.println("Flag External:");
         Serial.println(FlagExternal);
-        IsEEPROMWrite = true;
         break;
       }
       else
@@ -1029,7 +1018,6 @@ void ProcessData()
       Serial.println(IsAdded);
       Serial.println("Flag External:");
       Serial.println(FlagExternal);
-      IsEEPROMWrite = true;
       break;
     case 4:
       if (IsAdded)
@@ -1044,7 +1032,6 @@ void ProcessData()
         Serial.println(IsAdded);
         Serial.println("Flag External:");
         Serial.println(FlagExternal);
-        IsEEPROMWrite = true;
         break;
       }
       else
