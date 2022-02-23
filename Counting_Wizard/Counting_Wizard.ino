@@ -263,6 +263,17 @@ String getDistance()
 
 void loop()
 {
+  if (IsEEPROMWrite == true)
+  {
+    EEPROM.put(0, 1);
+    EEPROM.put(1, cnt);
+    EEPROM.put(2, newMinDistance);
+    writeStringToEEPROM(3, IPAdressOfExternalDevice);
+    EEPROM.commit();
+    Serial.println("writed to eeprom");
+    IsEEPROMWrite = false;
+  }
+
   if (IsResetDevice == true)
   {
     ESP.restart();
