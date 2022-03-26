@@ -118,8 +118,8 @@ void setup()
   EEPROM.begin(4096);
   delay(100);
 
-  // Timer set to 3hours - to restart device and calculate evry 3 hours
-  samplingInterval.start(10800000, AsyncDelay::MILLIS);
+  // Timer set to 10 hours - to restart device and calculate evry 10 hours
+  samplingInterval.start(36000000, AsyncDelay::MILLIS);
 
   for (uint8_t t = 4; t > 0; t--)
   {
@@ -277,7 +277,7 @@ void loop()
     ESP.restart();
   }
 
-  // reset device evry 3 hours
+  // reset device evry 10 hours
   if (samplingInterval.isExpired())
   {
     EEPROM.put(1, cnt);
