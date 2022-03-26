@@ -88,8 +88,8 @@ int FlagLastChangeInLoop;
 unsigned long lastChangeInLoop;
 
 // Async Delay
-//#include <AsyncDelay.h>
-//AsyncDelay samplingInterval;
+#include <AsyncDelay.h>
+AsyncDelay samplingInterval;
 
 //
 bool IsAdded;
@@ -119,7 +119,7 @@ void setup()
   delay(100);
 
   // Timer set to 3hours - to restart device and calculate evry 3 hours
-  //samplingInterval.start(10800000, AsyncDelay::MILLIS);
+  samplingInterval.start(10800000, AsyncDelay::MILLIS);
 
   for (uint8_t t = 4; t > 0; t--)
   {
@@ -223,6 +223,7 @@ void setup()
   // Read EEPROM
   if (EEPROM.read(0) == 1)
   {
+    cnt = EEPROM.read(1);
     newMinDistance = EEPROM.read(2);
     IPAdressOfExternalDevice = readStringFromEEPROM(3);
   }
@@ -275,11 +276,12 @@ void loop()
   }
 
   // reset device evry 3 hours
-  //if (samplingInterval.isExpired())
-  //{
-  //  samplingInterval.repeat();
-  //  ESP.restart();
-  //}
+  if (samplingInterval.isExpired())
+  {
+    EEPROM.put(1, cnt);
+    samplingInterval.repeat();
+    ESP.restart();
+  }
 
   // check button status
   val = digitalRead(inPin); // read input value
