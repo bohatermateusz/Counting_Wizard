@@ -180,6 +180,7 @@ void setup()
               Serial.print("New people value is: ");
               Serial.println(arg);
               cnt = arg.toInt();
+              //IsEEPROMWrite = true;
               request->send(200); });
 
   server.on("/setNewMinDistance", HTTP_POST, [](AsyncWebServerRequest *request)
@@ -263,6 +264,7 @@ void loop()
   if (IsEEPROMWrite == true)
   {
     EEPROM.put(0, 1);
+    // EEPROM.put(1, cnt);
     EEPROM.put(2, newMinDistance);
     writeStringToEEPROM(3, IPAdressOfExternalDevice);
     EEPROM.commit();
