@@ -123,8 +123,8 @@ void setup()
 
   for (uint8_t t = 4; t > 0; t--)
   {
-    USE_SERIAL.printf("[SETUP] BOOT WAIT %d...\n", t);
-    USE_SERIAL.flush();
+  //  USE_ // Serial.printf("[SETUP] BOOT WAIT %d...\n", t);
+        USE_SERIAL.flush();
     delay(1000);
   }
 
@@ -138,24 +138,24 @@ void setup()
   serverAA->onClient(&handleNewClient, serverAA);
   serverAA->begin();
 
-  Serial.println("VL53L1X Qwiic Test");
+  // Serial.println("VL53L1X Qwiic Test");
   if (distanceSensor.init() == false)
-    Serial.println("Sensor online!");
-  distanceSensor.setIntermeasurementPeriod(100);
+    // Serial.println("Sensor online!");
+    distanceSensor.setIntermeasurementPeriod(100);
   distanceSensor.setDistanceModeLong();
 
   delay(1000);
   zones_calibration();
 
-  Serial.println("Thresold0:");
-  Serial.println(DIST_THRESHOLD_MAX[0]);
-  Serial.println("Thresold1:");
-  Serial.println(DIST_THRESHOLD_MAX[1]);
-  Serial.println();
+  // Serial.println("Thresold0:");
+  // Serial.println(DIST_THRESHOLD_MAX[0]);
+  // Serial.println("Thresold1:");
+  // Serial.println(DIST_THRESHOLD_MAX[1]);
+  // Serial.println();
 
   if (!SPIFFS.begin())
   {
-    Serial.println("An Error has occurred while mounting SPIFFS");
+    // Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
 
@@ -164,21 +164,21 @@ void setup()
 
   server.on("/add", HTTP_POST, [](AsyncWebServerRequest *request)
             {
-              Serial.print("Adding one person");
+              //Serial.print("Adding one person");
               cnt++;
               request->send(200); });
 
   server.on("/subtract", HTTP_POST, [](AsyncWebServerRequest *request)
             {
-              Serial.print("Subtract one person");
+              //Serial.print("Subtract one person");
               cnt--;
               request->send(200); });
 
   server.on("/set", HTTP_POST, [](AsyncWebServerRequest *request)
             {
               String arg = request->arg("number");
-              Serial.print("New people value is: ");
-              Serial.println(arg);
+              //Serial.print("New people value is: ");
+              //Serial.println(arg);
               cnt = arg.toInt();
               //IsEEPROMWrite = true;
               request->send(200); });
@@ -186,8 +186,8 @@ void setup()
   server.on("/setNewMinDistance", HTTP_POST, [](AsyncWebServerRequest *request)
             {
               String arg = request->arg("number");
-              Serial.print("New MinDistance is: ");
-              Serial.println(newMinDistance);
+              //Serial.print("New MinDistance is: ");
+              //Serial.println(newMinDistance);
               newMinDistance = arg.toInt();
               IsEEPROMWrite = true;
               request->send(200); });
@@ -201,8 +201,8 @@ void setup()
   server.on("/setExternalIPAdress", HTTP_POST, [](AsyncWebServerRequest *request)
             {
               String arg = request->arg("string");
-              Serial.print("New External IP adress is: ");
-              Serial.println(IPAdressOfExternalDevice);
+              //Serial.print("New External IP adress is: ");
+              //Serial.println(IPAdressOfExternalDevice);
               IPAdressOfExternalDevice = arg;
               request->send(200);
               IsEEPROMWrite = true;
@@ -244,7 +244,7 @@ void setup()
   // expect pong from server within 3000 ms
   // consider connection disconnected if pong is not received 2 times
   webSocket.enableHeartbeat(15000, 3000, 2);
-  Serial.println("webSocket Client started");
+  // Serial.println("webSocket Client started");
 }
 
 String getNewMinDistance()
@@ -268,7 +268,7 @@ void loop()
     EEPROM.put(2, newMinDistance);
     writeStringToEEPROM(3, IPAdressOfExternalDevice);
     EEPROM.commit();
-    Serial.println("writed to eeprom");
+    // Serial.println("writed to eeprom");
     IsEEPROMWrite = false;
   }
 
@@ -304,7 +304,7 @@ void loop()
   distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
   distanceSensor.stopRanging();
 
-  // Serial.println(distance);
+  // //Serial.println(distance);
   //  inject the new ranged distance in the people counting algorithm
   processPeopleCountingData(distance, Zone);
   ProcessData();
@@ -337,11 +337,11 @@ void zones_calibration()
   delay(50);
   distanceSensor.setTimingBudgetInMs(50);
   distanceSensor.startRanging(); // Write configuration bytes to initiate measurement
-  Serial.println("Preheating Sensor - 3 seconds");
+  // Serial.println("Preheating Sensor - 3 seconds");
   delay(3000);
   distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
   distanceSensor.stopRanging();
-  Serial.println("Preheating Finished");
+  // Serial.println("Preheating Finished");
 
   for (int i = 0; i < number_attempts; i++)
   {
@@ -434,12 +434,12 @@ void zones_calibration()
     }
   }
 
-  Serial.println("ROI size:");
-  Serial.println(ROI_size);
-  Serial.println("centers of the ROIs defined");
-  Serial.println(center[0]);
-  Serial.println(center[1]);
-  Serial.println("Setting new ROIs");
+  // Serial.println("ROI size:");
+  // Serial.println(ROI_size);
+  // Serial.println("centers of the ROIs defined");
+  // Serial.println(center[0]);
+  // Serial.println(center[1]);
+  // Serial.println("Setting new ROIs");
 
   delay(1000);
   // we will now repeat the calculations necessary to define the thresholds with the updated zones
@@ -492,24 +492,24 @@ void zones_calibration()
 void CalculateThresoldZonePercentage()
 // calculatiing thersold zone
 {
-  Serial.println("Average Zone 0:");
-  Serial.println(average_zone_0);
-  Serial.println("Average Zone 1:");
-  Serial.println(average_zone_1);
+  // Serial.println("Average Zone 0:");
+  // Serial.println(average_zone_0);
+  // Serial.println("Average Zone 1:");
+  // Serial.println(average_zone_1);
   if (min(average_zone_0, average_zone_1) <= 130)
   {
-    Serial.println("small distance");
+    // Serial.println("small distance");
     threshold_percentage = 80;
     distanceSensor.setDistanceModeShort();
-    Serial.println(threshold_percentage);
+    // Serial.println(threshold_percentage);
   }
   else
   {
     // 70 suppose to be ambient light immune
-    Serial.println("long distance");
+    // Serial.println("long distance");
     threshold_percentage = (70 / min(average_zone_0, average_zone_1)) * 1000;
     distanceSensor.setDistanceModeLong();
-    Serial.println(threshold_percentage);
+    // Serial.println(threshold_percentage);
   }
 }
 
@@ -591,18 +591,18 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
       if (PathTrackFillingSize == 4)
       {
         // check exit or entry. no need to check PathTrack[0] == 0 , it is always the case
-        Serial.println("false positive?");
+        // Serial.println("false positive?");
         if ((PathTrack[1] == 1) && (PathTrack[2] == 3) && (PathTrack[3] == 2))
         {
           // this is an entry
-          Serial.println("Entering");
+          // Serial.println("Entering");
           FlagForFlow(1);
           ws.printfAll("1");
         }
         else if ((PathTrack[1] == 2) && (PathTrack[2] == 3) && (PathTrack[3] == 1))
         {
           // This an exit
-          Serial.println("Exiting");
+          // Serial.println("Exiting");
           FlagForFlow(2);
           ws.printfAll("2");
         }
@@ -733,12 +733,12 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
 /* clients events */
 static void handleError(void *arg, AsyncClient *client, int8_t error)
 {
-  Serial.printf("\n connection error %s from client %s \n", client->errorToString(error), client->remoteIP().toString().c_str());
+  // Serial.printf("\n connection error %s from client %s \n", client->errorToString(error), client->remoteIP().toString().c_str());
 }
 
 static void handleData(void *arg, AsyncClient *client, void *data, size_t len)
 {
-  Serial.printf("\n data received from client %s \n", client->remoteIP().toString().c_str());
+  // Serial.printf("\n data received from client %s \n", client->remoteIP().toString().c_str());
   Serial.write((uint8_t *)data, len);
 
   // reply to client
@@ -753,18 +753,18 @@ static void handleData(void *arg, AsyncClient *client, void *data, size_t len)
 
 static void handleDisconnect(void *arg, AsyncClient *client)
 {
-  Serial.printf("\n client %s disconnected \n", client->remoteIP().toString().c_str());
+  // Serial.printf("\n client %s disconnected \n", client->remoteIP().toString().c_str());
 }
 
 static void handleTimeOut(void *arg, AsyncClient *client, uint32_t time)
 {
-  Serial.printf("\n client ACK timeout ip: %s \n", client->remoteIP().toString().c_str());
+  // Serial.printf("\n client ACK timeout ip: %s \n", client->remoteIP().toString().c_str());
 }
 
 /* server events */
 static void handleNewClient(void *arg, AsyncClient *client)
 {
-  Serial.printf("\n new client has been connected to server, ip: %s", client->remoteIP().toString().c_str());
+  // Serial.printf("\n new client has been connected to server, ip: %s", client->remoteIP().toString().c_str());
 
   // add to list
   clients.push_back(client);
@@ -782,13 +782,13 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
   switch (type)
   {
   case WStype_DISCONNECTED:
-    USE_SERIAL.printf("[WSc] Disconnected!\n");
-    IsConnected = false;
+    //USE_ // Serial.printf("[WSc] Disconnected!\n");
+        IsConnected = false;
     break;
   case WStype_CONNECTED:
   {
-    USE_SERIAL.printf("[WSc] Connected to url: %s\n", payload);
-    IsConnected = true;
+   // USE_ // Serial.printf("[WSc] Connected to url: %s\n", payload);
+        IsConnected = true;
     // send message to server when Connected
     webSocket.sendTXT("Connected");
   }
@@ -797,39 +797,39 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
     // 1 IS SOMEONE ENETERD
     if (payload[0] == '1')
     {
-      Serial.println("External Device Sent: Entered");
+      // Serial.println("External Device Sent: Entered");
       FlagForFlowExternalDevice(1);
     }
     // 0 IS NOONE ENETERED
     if (payload[0] == '2')
     {
-      Serial.println("External Device Sent: Exit");
+      // Serial.println("External Device Sent: Exit");
       FlagForFlowExternalDevice(2);
     }
 
-    USE_SERIAL.printf("[WSc] get text: %s\n", payload);
-    // String customEnter = "Entering " + String(FlagEnter);
-    Serial.println(String(Flag));
-    // String customExit = "Exiting " + String(FlagExit);
+  //  USE_ // Serial.printf("[WSc] get text: %s\n", payload);
+        // String customEnter = "Entering " + String(FlagEnter);
+        // Serial.println(String(Flag));
+        // String customExit = "Exiting " + String(FlagExit);
 
-    // send message to server
-    // webSocket.sendTXT("sample message here");
-    break;
+        // send message to server
+        // webSocket.sendTXT("sample message here");
+        break;
   case WStype_BIN:
-    USE_SERIAL.printf("[WSc] get binary length: %u\n", length);
-    hexdump(payload, length);
+  //  USE_ // Serial.printf("[WSc] get binary length: %u\n", length);
+        hexdump(payload, length);
 
     // send data to server
     // webSocket.sendBIN(payload, length);
     break;
   case WStype_PING:
     // pong will be send automatically
-    USE_SERIAL.printf("[WSc] get ping\n");
-    break;
+  //  USE_ // Serial.printf("[WSc] get ping\n");
+        break;
   case WStype_PONG:
     // answer to a ping we send
-    USE_SERIAL.printf("[WSc] get pong\n");
-    break;
+  //  USE_ // Serial.printf("[WSc] get pong\n");
+        break;
   }
 }
 
@@ -877,24 +877,24 @@ void ProcessData()
       cnt++;
       Flag = 3;
       IsAdded = true;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
+      // Serial.println("Internal Flag:");
+      // Serial.println(Flag);
+      // Serial.println("Is added?");
+      // Serial.println(IsAdded);
+      // Serial.println("Flag External:");
+      // Serial.println(FlagExternal);
       break;
     case 3:
       if (IsAdded)
       {
         Flag = 0;
         FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
       else
@@ -903,12 +903,12 @@ void ProcessData()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = true;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
     }
@@ -923,24 +923,24 @@ void ProcessData()
       cnt++;
       FlagExternal = 3;
       IsAdded = true;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
+      // Serial.println("Internal Flag:");
+      // Serial.println(Flag);
+      // Serial.println("Is added?");
+      // Serial.println(IsAdded);
+      // Serial.println("Flag External:");
+      // Serial.println(FlagExternal);
       break;
     case 3:
       if (IsAdded)
       {
         Flag = 0;
         FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
       else
@@ -949,12 +949,12 @@ void ProcessData()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = true;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
     }
@@ -969,12 +969,12 @@ void ProcessData()
       cnt--;
       Flag = 4;
       IsAdded = false;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
+      // Serial.println("Internal Flag:");
+      // Serial.println(Flag);
+      // Serial.println("Is added?");
+      // Serial.println(IsAdded);
+      // Serial.println("Flag External:");
+      // Serial.println(FlagExternal);
       break;
 
     case 4:
@@ -984,24 +984,24 @@ void ProcessData()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = false;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
       else
       {
         Flag = 0;
         FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
     }
@@ -1016,12 +1016,12 @@ void ProcessData()
       cnt--;
       FlagExternal = 4;
       IsAdded = false;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
+      // Serial.println("Internal Flag:");
+      // Serial.println(Flag);
+      // Serial.println("Is added?");
+      // Serial.println(IsAdded);
+      // Serial.println("Flag External:");
+      // Serial.println(FlagExternal);
       break;
     case 4:
       if (IsAdded)
@@ -1030,24 +1030,24 @@ void ProcessData()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = false;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
       else
       {
         Flag = 0;
         FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
     }
