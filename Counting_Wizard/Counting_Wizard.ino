@@ -123,8 +123,8 @@ void setup()
 
   for (uint8_t t = 4; t > 0; t--)
   {
-  //  USE_ // Serial.printf("[SETUP] BOOT WAIT %d...\n", t);
-        USE_SERIAL.flush();
+    //  USE_ // Serial.printf("[SETUP] BOOT WAIT %d...\n", t);
+    USE_SERIAL.flush();
     delay(1000);
   }
 
@@ -281,6 +281,7 @@ void loop()
   if (samplingInterval.isExpired())
   {
     EEPROM.put(1, cnt);
+    EEPROM.commit();
     samplingInterval.repeat();
     ESP.restart();
   }
@@ -782,13 +783,13 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
   switch (type)
   {
   case WStype_DISCONNECTED:
-    //USE_ // Serial.printf("[WSc] Disconnected!\n");
-        IsConnected = false;
+    // USE_ // Serial.printf("[WSc] Disconnected!\n");
+    IsConnected = false;
     break;
   case WStype_CONNECTED:
   {
-   // USE_ // Serial.printf("[WSc] Connected to url: %s\n", payload);
-        IsConnected = true;
+    // USE_ // Serial.printf("[WSc] Connected to url: %s\n", payload);
+    IsConnected = true;
     // send message to server when Connected
     webSocket.sendTXT("Connected");
   }
@@ -807,29 +808,29 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
       FlagForFlowExternalDevice(2);
     }
 
-  //  USE_ // Serial.printf("[WSc] get text: %s\n", payload);
-        // String customEnter = "Entering " + String(FlagEnter);
-        // Serial.println(String(Flag));
-        // String customExit = "Exiting " + String(FlagExit);
+    //  USE_ // Serial.printf("[WSc] get text: %s\n", payload);
+    // String customEnter = "Entering " + String(FlagEnter);
+    // Serial.println(String(Flag));
+    // String customExit = "Exiting " + String(FlagExit);
 
-        // send message to server
-        // webSocket.sendTXT("sample message here");
-        break;
+    // send message to server
+    // webSocket.sendTXT("sample message here");
+    break;
   case WStype_BIN:
-  //  USE_ // Serial.printf("[WSc] get binary length: %u\n", length);
-        hexdump(payload, length);
+    //  USE_ // Serial.printf("[WSc] get binary length: %u\n", length);
+    hexdump(payload, length);
 
     // send data to server
     // webSocket.sendBIN(payload, length);
     break;
   case WStype_PING:
     // pong will be send automatically
-  //  USE_ // Serial.printf("[WSc] get ping\n");
-        break;
+    //  USE_ // Serial.printf("[WSc] get ping\n");
+    break;
   case WStype_PONG:
     // answer to a ping we send
-  //  USE_ // Serial.printf("[WSc] get pong\n");
-        break;
+    //  USE_ // Serial.printf("[WSc] get pong\n");
+    break;
   }
 }
 
