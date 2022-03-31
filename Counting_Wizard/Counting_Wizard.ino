@@ -81,11 +81,11 @@ int timeout = 120; // seconds to run for AP portal
 
 // Flag for communication between 2 devices
 int Flag;
-unsigned long lastChange;
+// unsigned long lastChange;
 int FlagExternal;
-unsigned long lastChangeExternal;
+// unsigned long lastChangeExternal;
 int FlagLastChangeInLoop;
-unsigned long lastChangeInLoop;
+// unsigned long lastChangeInLoop;
 
 // Async Delay
 #include <AsyncDelay.h>
@@ -116,17 +116,25 @@ void setup()
   Serial.begin(115200);
   // EEPROM
   EEPROM.begin(4096);
+  // Read EEPROM
+  // if (EEPROM.read(0) == 1)
+  //{
+  byte data = EEPROM.read(1);
+  cnt = (int8_t)data;
+  newMinDistance = EEPROM.read(2);
+  IPAdressOfExternalDevice = readStringFromEEPROM(3);
+  //}
   delay(100);
 
-  // Timer set to 8 hours - to restart device and calculate evry 8 hours
-  samplingInterval.start(28800000, AsyncDelay::MILLIS);
+  // Timer set to 4 hours - to restart device and calculate evry 6 hours
+  samplingInterval.start(14400000, AsyncDelay::MILLIS);
 
-  for (uint8_t t = 4; t > 0; t--)
-  {
-    //  USE_ // Serial.printf("[SETUP] BOOT WAIT %d...\n", t);
-    USE_SERIAL.flush();
-    delay(1000);
-  }
+  // for (uint8_t t = 4; t > 0; t--)
+  //{
+  //   USE_SERIAL.printf("[SETUP] BOOT WAIT %d...\n", t);
+  //   USE_SERIAL.flush();
+  //   delay(1000);
+  // }
 
   // pinmode for button purpose
   pinMode(inPin, INPUT);
@@ -153,11 +161,11 @@ void setup()
   // Serial.println(DIST_THRESHOLD_MAX[1]);
   // Serial.println();
 
-  if (!SPIFFS.begin())
-  {
-    // Serial.println("An Error has occurred while mounting SPIFFS");
-    return;
-  }
+  // if (!SPIFFS.begin())
+  //{
+  // Serial.println("An Error has occurred while mounting SPIFFS");
+  //  return;
+  //}
 
   server.on("/getADC", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(handleADC())); });
@@ -221,14 +229,6 @@ void setup()
   // Start server
   server.begin();
 
-  // Read EEPROM
-  if (EEPROM.read(0) == 1)
-  {
-    cnt = EEPROM.read(1);
-    newMinDistance = EEPROM.read(2);
-    IPAdressOfExternalDevice = readStringFromEEPROM(3);
-  }
-
   String IPTrimmed = IPAdressOfExternalDevice;
   IPTrimmed.trim();
   // server address, port and URL
@@ -277,10 +277,12 @@ void loop()
     ESP.restart();
   }
 
-  // reset device evry 8 hours
+  // reset device evry 4 hours
   if (samplingInterval.isExpired())
   {
     EEPROM.put(1, cnt);
+    // Serial.println("writing:");
+    // Serial.println(cnt);
     EEPROM.commit();
     samplingInterval.repeat();
     ESP.restart();
