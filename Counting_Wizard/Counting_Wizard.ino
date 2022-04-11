@@ -222,6 +222,18 @@ void setup()
   server.on("/ExternalDeviceConnectionStatus", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(IsConnected)); });
 
+  server.on("/FlagForFlowExternalDeviceEntered", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
+              //External Device Sent Entered;
+              FlagForFlowExternalDevice(1);
+              request->send(200); });
+
+  server.on("/FlagForFlowExternalDeviceExit", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
+              //External Device Sent Exit;
+              FlagForFlowExternalDevice(2);
+              request->send(200); });
+
   // attach AsyncWebSocket
   ws.onEvent(onEvent);
   server.addHandler(&ws);
