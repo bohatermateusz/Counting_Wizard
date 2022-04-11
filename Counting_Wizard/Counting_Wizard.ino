@@ -224,13 +224,13 @@ void setup()
 
   server.on("/FlagForFlowExternalDeviceEntered", HTTP_POST, [](AsyncWebServerRequest *request)
             {
-              //External Device Sent Entered;
+              Serial.println("External Device Sent Entered");
               FlagForFlowExternalDevice(1);
               request->send(200); });
 
   server.on("/FlagForFlowExternalDeviceExit", HTTP_POST, [](AsyncWebServerRequest *request)
             {
-              //External Device Sent Exit;
+              Serial.println("External Device Sent Exit");
               FlagForFlowExternalDevice(2);
               request->send(200); });
 
