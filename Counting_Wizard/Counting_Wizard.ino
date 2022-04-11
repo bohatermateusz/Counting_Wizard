@@ -263,7 +263,7 @@ void loop()
 {
   if (IsEEPROMWrite == true)
   {
-    EEPROM.put(0, 1);
+    // EEPROM.put(0, 1);
     // EEPROM.put(1, cnt);
     EEPROM.put(2, newMinDistance);
     writeStringToEEPROM(3, IPAdressOfExternalDevice);
@@ -274,6 +274,8 @@ void loop()
 
   if (IsResetDevice == true)
   {
+    EEPROM.put(1, cnt);
+    EEPROM.commit();
     ESP.restart();
   }
 
