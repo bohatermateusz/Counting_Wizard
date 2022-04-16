@@ -52,6 +52,7 @@
                 "C:\\Users\\bohat\\OneDrive\\Documents\\Arduino\\libraries\\ESPAsyncWebServer-master\\src",
                 "C:\\Users\\bohat\\OneDrive\\Documents\\Arduino\\libraries\\AsyncDelay-1.1.2\\src",
                 "C:\\Users\\bohat\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.7.2\\libraries\\EEPROM",
+                "C:\\Users\\bohat\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.7.2\\libraries\\ESP8266HTTPClient\\src",
                 "c:\\users\\bohat\\appdata\\local\\arduino15\\packages\\esp8266\\tools\\xtensa-lx106-elf-gcc\\2.5.0-4-b40a506\\xtensa-lx106-elf\\include\\c++\\4.8.2",
                 "c:\\users\\bohat\\appdata\\local\\arduino15\\packages\\esp8266\\tools\\xtensa-lx106-elf-gcc\\2.5.0-4-b40a506\\xtensa-lx106-elf\\include\\c++\\4.8.2\\xtensa-lx106-elf",
                 "c:\\users\\bohat\\appdata\\local\\arduino15\\packages\\esp8266\\tools\\xtensa-lx106-elf-gcc\\2.5.0-4-b40a506\\xtensa-lx106-elf\\include\\c++\\4.8.2\\backward",

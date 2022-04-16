@@ -110,6 +110,8 @@ bool IsConnected;
 bool IsResetDevice;
 bool IsEEPROMWrite;
 
+#include <ESP8266HTTPClient.h>
+
 void setup()
 {
   Wire.begin();
@@ -185,8 +187,8 @@ void setup()
   server.on("/set", HTTP_POST, [](AsyncWebServerRequest *request)
             {
               String arg = request->arg("number");
-              //Serial.print("New people value is: ");
-              //Serial.println(arg);
+              Serial.print("New people value is: ");
+              Serial.println(arg.toInt());
               cnt = arg.toInt();
               //IsEEPROMWrite = true;
               request->send(200); });
@@ -222,16 +224,12 @@ void setup()
   server.on("/ExternalDeviceConnectionStatus", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(IsConnected)); });
 
-  server.on("/FlagForFlowExternalDeviceEntered", HTTP_POST, [](AsyncWebServerRequest *request)
+  server.on("/PostMessageToExternalDevice", HTTP_POST, [](AsyncWebServerRequest *request)
             {
-              Serial.println("External Device Sent Entered");
-              FlagForFlowExternalDevice(1);
-              request->send(200); });
-
-  server.on("/FlagForFlowExternalDeviceExit", HTTP_POST, [](AsyncWebServerRequest *request)
-            {
-              Serial.println("External Device Sent Exit");
-              FlagForFlowExternalDevice(2);
+              Serial.println("External Device Sent Message:");
+              String arg = request->arg("string");
+              Serial.println(arg);
+              FlagForFlowExternalDevice(arg.toInt());
               request->send(200); });
 
   // attach AsyncWebSocket
@@ -615,6 +613,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
           // Serial.println("Entering");
           FlagForFlow(1);
           ws.printfAll("1");
+          PostMessageToExternalDevice("1");
         }
         else if ((PathTrack[1] == 2) && (PathTrack[2] == 3) && (PathTrack[3] == 1))
         {
@@ -622,6 +621,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
           // Serial.println("Exiting");
           FlagForFlow(2);
           ws.printfAll("2");
+          PostMessageToExternalDevice("2");
         }
       }
       for (int i = 0; i < 4; i++)
@@ -1069,4 +1069,23 @@ void ProcessData()
       }
     }
   }
+}
+
+#include <ESP8266WiFi.h>
+
+void PostMessageToExternalDevice(String value)
+{
+  HTTPClient http; // Declare object of class HTTPClient
+
+  http.begin("http://192.168.4.1:80/set?number=7"); // Specify request destination
+  http.addHeader("Content-Type", "text/plain");                 // Specify content-type header
+  String httpRequestData = ""; //+ value;
+  Serial.println(httpRequestData);
+  int httpCode = http.POST(httpRequestData); // Send the request
+  //String payload = http.getString();         // Get the response payload
+
+  //Serial.println(httpCode); // Print HTTP return code
+  //Serial.println(payload);  // Print request response payload
+
+  http.end(); // Close connection
 }

@@ -3,6 +3,7 @@
         "xutility": "cpp",
         "iterator": "cpp",
         "istream": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "complex": "cpp"
     }
 }
