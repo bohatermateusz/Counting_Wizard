@@ -22,6 +22,8 @@ WiFiManager wifiManager;
 #define WEBSERVER_H
 #include "ESPAsyncWebServer.h"
 
+#include <ESP8266WiFi.h>
+
 #define DNS_PORT 53
 AsyncWebServer server(80);
 DNSServer DNS;
@@ -187,8 +189,8 @@ void setup()
   server.on("/set", HTTP_POST, [](AsyncWebServerRequest *request)
             {
               String arg = request->arg("number");
-              Serial.print("New people value is: ");
-              Serial.println(arg.toInt());
+              //Serial.print("New people value is: ");
+              //Serial.println(arg.toInt());
               cnt = arg.toInt();
               //IsEEPROMWrite = true;
               request->send(200); });
@@ -226,10 +228,12 @@ void setup()
 
   server.on("/PostMessageToExternalDevice", HTTP_POST, [](AsyncWebServerRequest *request)
             {
-              Serial.println("External Device Sent Message:");
-              String arg = request->arg("string");
-              Serial.println(arg);
+              Serial.println("External Device Sent new External flag:");
+              String arg = request->arg("number");
+              Serial.print("New external flag is: ");
+              Serial.println(arg.toInt());
               FlagForFlowExternalDevice(arg.toInt());
+              //IsEEPROMWrite = true;
               request->send(200); });
 
   // attach AsyncWebSocket
@@ -1071,21 +1075,18 @@ void ProcessData()
   }
 }
 
-#include <ESP8266WiFi.h>
-
 void PostMessageToExternalDevice(String value)
 {
   HTTPClient http; // Declare object of class HTTPClient
-
-  http.begin("http://192.168.4.1:80/set?number=7"); // Specify request destination
+  Serial.println("Posting to external device...");
+  String messageToPost = "http://192.168.4.1:80/PostMessageToExternalDevice?number=" + String(value);
+  http.begin(messageToPost); // Specify request destination
   http.addHeader("Content-Type", "text/plain");                 // Specify content-type header
   String httpRequestData = ""; //+ value;
   Serial.println(httpRequestData);
   int httpCode = http.POST(httpRequestData); // Send the request
   //String payload = http.getString();         // Get the response payload
-
   //Serial.println(httpCode); // Print HTTP return code
   //Serial.println(payload);  // Print request response payload
-
   http.end(); // Close connection
 }
