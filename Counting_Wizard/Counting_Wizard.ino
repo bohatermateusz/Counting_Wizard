@@ -616,7 +616,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
           // this is an entry
           // Serial.println("Entering");
           FlagForFlow(1);
-          ws.printfAll("1");
+          //ws.printfAll("1");
           PostMessageToExternalDevice("1");
         }
         else if ((PathTrack[1] == 2) && (PathTrack[2] == 3) && (PathTrack[3] == 1))
@@ -624,7 +624,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
           // This an exit
           // Serial.println("Exiting");
           FlagForFlow(2);
-          ws.printfAll("2");
+          //ws.printfAll("2");
           PostMessageToExternalDevice("2");
         }
       }
@@ -819,13 +819,13 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
     if (payload[0] == '1')
     {
       // Serial.println("External Device Sent: Entered");
-      FlagForFlowExternalDevice(1);
+      //FlagForFlowExternalDevice(1);
     }
     // 0 IS NOONE ENETERED
     if (payload[0] == '2')
     {
       // Serial.println("External Device Sent: Exit");
-      FlagForFlowExternalDevice(2);
+      //FlagForFlowExternalDevice(2);
     }
 
     //  USE_ // Serial.printf("[WSc] get text: %s\n", payload);
