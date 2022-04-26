@@ -4,6 +4,9 @@
         "iterator": "cpp",
         "istream": "cpp",
         "*.tcc": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "thread": "cpp",
+        "xlocale": "cpp",
+        "locale": "cpp"
     }
 }

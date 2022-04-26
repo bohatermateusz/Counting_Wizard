@@ -101,8 +101,17 @@ bool IsConnected;
 bool IsResetDevice;
 bool IsEEPROMWrite;
 
+#include <ESP8266HTTPClient.h>
+
 // ESPNOW
 #include <espnow.h>
+
+typedef struct struct_message
+{
+  int cnt_espNow;
+} struct_message;
+
+struct_message incomingReadings;
 
 void setup()
 {
@@ -225,6 +234,18 @@ void setup()
 
   String IPTrimmed = IPAdressOfExternalDevice;
   IPTrimmed.trim();
+
+  Serial.print("Wi-Fi Channel: ");
+  Serial.println(WiFi.channel());
+
+  // Init ESP-NOW
+  if (esp_now_init() != 0)
+  {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+
+  esp_now_register_recv_cb(OnDataRecv);
 }
 
 String getNewMinDistance()
@@ -906,4 +927,18 @@ void PostMessageToExternalDevice(String value)
   // Serial.println(httpCode); // Print HTTP return code
   // Serial.println(payload);  // Print request response payload
   http.end(); // Close connection
+}
+
+// callback function that will be executed when data is received
+void OnDataRecv(uint8_t *mac_addr, uint8_t *incomingData, uint8_t len)
+{
+  // Copies the sender mac address to a string
+  char macStr[18];
+  Serial.print("Packet received from: ");
+  snprintf(macStr, sizeof(macStr), "%02x:%02x:%02x:%02x:%02x:%02x",
+           mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
+  Serial.println(macStr);
+  memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
+  Serial.printf("Board ID %u: %u bytes\n", incomingReadings.cnt_espNow, len);
+  Serial.println();
 }
