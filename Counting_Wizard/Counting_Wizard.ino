@@ -101,7 +101,8 @@ bool IsConnected;
 bool IsResetDevice;
 bool IsEEPROMWrite;
 
-#include <ESP8266HTTPClient.h>
+// ESPNOW
+#include <espnow.h>
 
 void setup()
 {
