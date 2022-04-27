@@ -113,8 +113,21 @@ typedef struct struct_message
 
 struct_message incomingReadings;
 
+unsigned long previousMillis = 0; // Stores last time temperature was published
+unsigned long interval = 10000;
+
+// Insert your SSID
+constexpr char WIFI_SSID[] = "ESP-7D8299";
+
+// MAC Address of the receiver
+uint8_t broadcastAddress[] = {0xB4, 0xE6, 0x2D, 0x7D, 0x82, 0x99};
+
+// Create a struct_message called myData
+struct_message myData;
+
 void setup()
 {
+
   Wire.begin();
   Serial.begin(115200);
   // EEPROM
@@ -238,6 +251,17 @@ void setup()
   Serial.print("Wi-Fi Channel: ");
   Serial.println(WiFi.channel());
 
+  // Set device as a Wi-Fi Station and set channel
+  WiFi.mode(WIFI_STA);
+
+  int32_t channel = getWiFiChannel(WIFI_SSID);
+
+  WiFi.printDiag(Serial); // Uncomment to verify channel number before
+  wifi_promiscuous_enable(1);
+  wifi_set_channel(channel);
+  wifi_promiscuous_enable(0);
+  WiFi.printDiag(Serial); // Uncomment to verify channel change after
+
   // Init ESP-NOW
   if (esp_now_init() != 0)
   {
@@ -245,7 +269,14 @@ void setup()
     return;
   }
 
+  // Once ESPNow is successfully Init, we will register for Send CB to
+  // get the status of Trasnmitted packet
+  esp_now_set_self_role(ESP_NOW_ROLE_COMBO);
+
+  esp_now_register_send_cb(OnDataSent);
   esp_now_register_recv_cb(OnDataRecv);
+
+  esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_COMBO, 1, NULL, 0);
 }
 
 String getNewMinDistance()
@@ -314,6 +345,22 @@ void loop()
   //  inject the new ranged distance in the people counting algorithm
   processPeopleCountingData(distance, Zone);
   ProcessData();
+
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval)
+  {
+    // Save the last time a new reading was published
+    previousMillis = currentMillis;
+    // Set values to send
+    myData.cnt_espNow = 999;
+    // myData.temp = 7.8;
+    // myData.hum = 8.9;
+    // myData.readingId = readingId++;
+
+    esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
+
+    Serial.print("loop");
+  }
 
   Zone++;
   Zone = Zone % 2;
@@ -646,6 +693,9 @@ extern "C"
 #include "user_interface.h"
 }
 
+// Set your Board ID (ESP32 Sender #1 = BOARD_ID 1, ESP32 Sender #2 = BOARD_ID 2, etc)
+#define BOARD_ID 2
+
 /* clients events */
 static void handleError(void *arg, AsyncClient *client, int8_t error)
 {
@@ -941,4 +991,33 @@ void OnDataRecv(uint8_t *mac_addr, uint8_t *incomingData, uint8_t len)
   memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
   Serial.printf("Board ID %u: %u bytes\n", incomingReadings.cnt_espNow, len);
   Serial.println();
+}
+
+int32_t getWiFiChannel(const char *ssid)
+{
+  if (int32_t n = WiFi.scanNetworks())
+  {
+    for (uint8_t i = 0; i < n; i++)
+    {
+      if (!strcmp(ssid, WiFi.SSID(i).c_str()))
+      {
+        return WiFi.channel(i);
+      }
+    }
+  }
+  return 0;
+}
+
+// Callback when data is sent
+void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus)
+{
+  Serial.print("Last Packet Send Status: ");
+  if (sendStatus == 0)
+  {
+    Serial.println("Delivery success");
+  }
+  else
+  {
+    Serial.println("Delivery fail");
+  }
 }
