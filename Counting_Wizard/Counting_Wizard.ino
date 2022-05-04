@@ -101,7 +101,7 @@ bool IsConnected;
 bool IsResetDevice;
 bool IsEEPROMWrite;
 
-#include <ESP8266HTTPClient.h>
+//#include <ESP8266HTTPClient.h>
 
 // ESPNOW
 #include <espnow.h>
@@ -117,7 +117,7 @@ unsigned long previousMillis = 0; // Stores last time temperature was published
 unsigned long interval = 10000;
 
 // Insert your SSID
-constexpr char WIFI_SSID[] = "ESP-7D82999";
+// constexpr char WIFI_SSID[] = "ESP-7D82999";
 
 // MAC Address of the receiver
 uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
@@ -140,8 +140,8 @@ void setup()
   cnt = (int8_t)data;
   byte dataNewMinDistance = EEPROM.read(2);
   newMinDistance = (int8_t)dataNewMinDistance;
-  IPAdressOfExternalDevice = readStringFromEEPROM(3);
-  //}
+  // IPAdressOfExternalDevice = readStringFromEEPROM(3);
+  // }
   delay(100);
 
   // Timer set to 4 hours - to restart device and calculate evry 6 hours
@@ -153,9 +153,9 @@ void setup()
   wifiManager.autoConnect("Counting_Wizard");
   delay(100);
 
-  AsyncServer *serverAA = new AsyncServer(TCP_PORT); // start listening on tcp port 7050
-  serverAA->onClient(&handleNewClient, serverAA);
-  serverAA->begin();
+  // AsyncServer *serverAA = new AsyncServer(TCP_PORT); // start listening on tcp port 7050
+  // serverAA->onClient(&handleNewClient, serverAA);
+  // serverAA->begin();
 
   // Serial.println("VL53L1X Qwiic Test");
   if (distanceSensor.init() == false)
@@ -243,16 +243,16 @@ void setup()
               //IsEEPROMWrite = true;
               request->send(200); });
 
-  String IPTrimmed = IPAdressOfExternalDevice;
-  IPTrimmed.trim();
+  // String IPTrimmed = IPAdressOfExternalDevice;
+  // IPTrimmed.trim();
 
-  Serial.print("Wi-Fi Channel: ");
-  Serial.println(WiFi.channel());
+  // Serial.print("Wi-Fi Channel: ");
+  // Serial.println(WiFi.channel());
 
   // Set device as a Wi-Fi Station and set channel
   WiFi.mode(WIFI_AP_STA);
 
-  int32_t channel = getWiFiChannel(WIFI_SSID);
+  // int32_t channel = getWiFiChannel(WIFI_SSID);
 
   // WiFi.printDiag(Serial); // Uncomment to verify channel number before
   // wifi_promiscuous_enable(1);
@@ -695,7 +695,7 @@ extern "C"
 }
 
 // Set your Board ID (ESP32 Sender #1 = BOARD_ID 1, ESP32 Sender #2 = BOARD_ID 2, etc)
-#define BOARD_ID 2
+//#define BOARD_ID 2
 
 /* clients events */
 static void handleError(void *arg, AsyncClient *client, int8_t error)
@@ -966,18 +966,18 @@ void ProcessData()
 
 void PostMessageToExternalDevice(String value)
 {
-  HTTPClient http; // Declare object of class HTTPClient
+  // HTTPClient http; // Declare object of class HTTPClient
   Serial.println("Posting to external device...");
   String messageToPost = "http://192.168.4.1:80/PostMessageToExternalDevice?number=" + String(value);
-  http.begin(messageToPost);                    // Specify request destination
-  http.addHeader("Content-Type", "text/plain"); // Specify content-type header
-  String httpRequestData = "";                  //+ value;
+  // http.begin(messageToPost);                    // Specify request destination
+  // http.addHeader("Content-Type", "text/plain"); // Specify content-type header
+  String httpRequestData = ""; //+ value;
   Serial.println(httpRequestData);
-  int httpCode = http.POST(httpRequestData); // Send the request
-  // String payload = http.getString();         // Get the response payload
-  // Serial.println(httpCode); // Print HTTP return code
-  // Serial.println(payload);  // Print request response payload
-  http.end(); // Close connection
+  // int httpCode = http.POST(httpRequestData); // Send the request
+  //  String payload = http.getString();         // Get the response payload
+  //  Serial.println(httpCode); // Print HTTP return code
+  //  Serial.println(payload);  // Print request response payload
+  // http.end(); // Close connection
 }
 
 // callback function that will be executed when data is received
@@ -992,21 +992,6 @@ void OnDataRecv(uint8_t *mac_addr, uint8_t *incomingData, uint8_t len)
   memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
   Serial.printf("Board ID %u: %u bytes\n", incomingReadings.cnt_espNow, len);
   Serial.println();
-}
-
-int32_t getWiFiChannel(const char *ssid)
-{
-  if (int32_t n = WiFi.scanNetworks())
-  {
-    for (uint8_t i = 0; i < n; i++)
-    {
-      if (!strcmp(ssid, WiFi.SSID(i).c_str()))
-      {
-        return WiFi.channel(i);
-      }
-    }
-  }
-  return 0;
 }
 
 // Callback when data is sent
