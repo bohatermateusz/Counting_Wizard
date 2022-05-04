@@ -120,8 +120,8 @@ unsigned long interval = 10000;
 // constexpr char WIFI_SSID[] = "ESP-7D82999";
 
 // MAC Address of the receiver
-uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
-// uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
+// uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
+ uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
 
 // Create a struct_message called myData
 struct_message myData;
@@ -274,7 +274,7 @@ void setup()
   esp_now_register_send_cb(OnDataSent);
   esp_now_register_recv_cb(OnDataRecv);
 
-  //esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_COMBO, 1, NULL, 0);
+  // esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_COMBO, 1, NULL, 0);
 
   // Start server
   server.begin();
@@ -346,22 +346,6 @@ void loop()
   //  inject the new ranged distance in the people counting algorithm
   processPeopleCountingData(distance, Zone);
   ProcessData();
-
-  unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval)
-  {
-    // Save the last time a new reading was published
-    previousMillis = currentMillis;
-    // Set values to send
-    myData.cnt_espNow = 999;
-    // myData.temp = 7.8;
-    // myData.hum = 8.9;
-    // myData.readingId = readingId++;
-
-    esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
-
-    Serial.print("loop");
-  }
 
   Zone++;
   Zone = Zone % 2;
@@ -651,7 +635,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
           Serial.println("Entering");
           FlagForFlow(1);
           // ws.printfAll("1");
-          PostMessageToExternalDevice("1");
+          PostMessageToExternalDevice(1);
         }
         else if ((PathTrack[1] == 2) && (PathTrack[2] == 3) && (PathTrack[3] == 1))
         {
@@ -659,7 +643,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
           Serial.println("Exiting");
           FlagForFlow(2);
           // ws.printfAll("2");
-          PostMessageToExternalDevice("2");
+          PostMessageToExternalDevice(2);
         }
       }
       for (int i = 0; i < 4; i++)
@@ -964,32 +948,39 @@ void ProcessData()
   }
 }
 
-void PostMessageToExternalDevice(String value)
+void PostMessageToExternalDevice(int value)
 {
   // HTTPClient http; // Declare object of class HTTPClient
   Serial.println("Posting to external device...");
-  String messageToPost = "http://192.168.4.1:80/PostMessageToExternalDevice?number=" + String(value);
-  // http.begin(messageToPost);                    // Specify request destination
-  // http.addHeader("Content-Type", "text/plain"); // Specify content-type header
-  String httpRequestData = ""; //+ value;
-  Serial.println(httpRequestData);
-  // int httpCode = http.POST(httpRequestData); // Send the request
-  //  String payload = http.getString();         // Get the response payload
-  //  Serial.println(httpCode); // Print HTTP return code
-  //  Serial.println(payload);  // Print request response payload
-  // http.end(); // Close connection
+
+  myData.cnt_espNow = value;
+  esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
+
+  // String messageToPost = "http://192.168.4.1:80/PostMessageToExternalDevice?number=" + String(value);
+  //  http.begin(messageToPost);                    // Specify request destination
+  //  http.addHeader("Content-Type", "text/plain"); // Specify content-type header
+  // String httpRequestData = ""; //+ value;
+  // Serial.println(httpRequestData);
+  //  int httpCode = http.POST(httpRequestData); // Send the request
+  //   String payload = http.getString();         // Get the response payload
+  //   Serial.println(httpCode); // Print HTTP return code
+  //   Serial.println(payload);  // Print request response payload
+  //  http.end(); // Close connection
 }
 
 // callback function that will be executed when data is received
 void OnDataRecv(uint8_t *mac_addr, uint8_t *incomingData, uint8_t len)
 {
   // Copies the sender mac address to a string
-  char macStr[18];
-  Serial.print("Packet received from: ");
-  snprintf(macStr, sizeof(macStr), "%02x:%02x:%02x:%02x:%02x:%02x",
-           mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
-  Serial.println(macStr);
+  // char macStr[18];
+  // Serial.print("Packet received from: ");
+  // snprintf(macStr, sizeof(macStr), "%02x:%02x:%02x:%02x:%02x:%02x",
+  //         mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3], mac_addr[4], mac_addr[5]);
+  // Serial.println(macStr);
   memcpy(&incomingReadings, incomingData, sizeof(incomingReadings));
+
+  FlagForFlowExternalDevice(incomingReadings.cnt_espNow);
+
   Serial.printf("Board ID %u: %u bytes\n", incomingReadings.cnt_espNow, len);
   Serial.println();
 }
