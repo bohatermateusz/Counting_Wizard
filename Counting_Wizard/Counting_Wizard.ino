@@ -113,15 +113,12 @@ typedef struct struct_message
 
 struct_message incomingReadings;
 
-unsigned long previousMillis = 0; // Stores last time temperature was published
-unsigned long interval = 10000;
-
 // Insert your SSID
 // constexpr char WIFI_SSID[] = "ESP-7D82999";
 
 // MAC Address of the receiver
 // uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
- uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
+uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
 
 // Create a struct_message called myData
 struct_message myData;
@@ -232,16 +229,6 @@ void setup()
 
   server.on("/ExternalDeviceConnectionStatus", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(IsConnected)); });
-
-  server.on("/PostMessageToExternalDevice", HTTP_POST, [](AsyncWebServerRequest *request)
-            {
-              Serial.println("External Device Sent new External flag:");
-              String arg = request->arg("number");
-              Serial.print("New external flag is: ");
-              Serial.println(arg.toInt());
-              FlagForFlowExternalDevice(arg.toInt());
-              //IsEEPROMWrite = true;
-              request->send(200); });
 
   // String IPTrimmed = IPAdressOfExternalDevice;
   // IPTrimmed.trim();
@@ -682,50 +669,50 @@ extern "C"
 //#define BOARD_ID 2
 
 /* clients events */
-static void handleError(void *arg, AsyncClient *client, int8_t error)
-{
-  // Serial.printf("\n connection error %s from client %s \n", client->errorToString(error), client->remoteIP().toString().c_str());
-}
+// static void handleError(void *arg, AsyncClient *client, int8_t error)
+// {
+//   // Serial.printf("\n connection error %s from client %s \n", client->errorToString(error), client->remoteIP().toString().c_str());
+// }
 
-static void handleData(void *arg, AsyncClient *client, void *data, size_t len)
-{
-  // Serial.printf("\n data received from client %s \n", client->remoteIP().toString().c_str());
-  Serial.write((uint8_t *)data, len);
+// static void handleData(void *arg, AsyncClient *client, void *data, size_t len)
+// {
+//   // Serial.printf("\n data received from client %s \n", client->remoteIP().toString().c_str());
+//   Serial.write((uint8_t *)data, len);
 
-  // reply to client
-  if (client->space() > 32 && client->canSend())
-  {
-    char reply[32];
-    sprintf(reply, "this is from %s", SERVER_HOST_NAME);
-    client->add(reply, strlen(reply));
-    client->send();
-  }
-}
+//   // reply to client
+//   if (client->space() > 32 && client->canSend())
+//   {
+//     char reply[32];
+//     sprintf(reply, "this is from %s", SERVER_HOST_NAME);
+//     client->add(reply, strlen(reply));
+//     client->send();
+//   }
+// }
 
-static void handleDisconnect(void *arg, AsyncClient *client)
-{
-  // Serial.printf("\n client %s disconnected \n", client->remoteIP().toString().c_str());
-}
+// static void handleDisconnect(void *arg, AsyncClient *client)
+// {
+//   // Serial.printf("\n client %s disconnected \n", client->remoteIP().toString().c_str());
+// }
 
-static void handleTimeOut(void *arg, AsyncClient *client, uint32_t time)
-{
-  // Serial.printf("\n client ACK timeout ip: %s \n", client->remoteIP().toString().c_str());
-}
+// static void handleTimeOut(void *arg, AsyncClient *client, uint32_t time)
+// {
+//   // Serial.printf("\n client ACK timeout ip: %s \n", client->remoteIP().toString().c_str());
+// }
 
 /* server events */
-static void handleNewClient(void *arg, AsyncClient *client)
-{
-  // Serial.printf("\n new client has been connected to server, ip: %s", client->remoteIP().toString().c_str());
+// static void handleNewClient(void *arg, AsyncClient *client)
+// {
+//   // Serial.printf("\n new client has been connected to server, ip: %s", client->remoteIP().toString().c_str());
 
-  // add to list
-  clients.push_back(client);
+//   // add to list
+//   clients.push_back(client);
 
-  // register events
-  client->onData(&handleData, NULL);
-  client->onError(&handleError, NULL);
-  client->onDisconnect(&handleDisconnect, NULL);
-  client->onTimeout(&handleTimeOut, NULL);
-}
+//   // register events
+//   client->onData(&handleData, NULL);
+//   client->onError(&handleError, NULL);
+//   client->onDisconnect(&handleDisconnect, NULL);
+//   client->onTimeout(&handleTimeOut, NULL);
+// }
 
 // 0-null; 1-entered; 2-exited;
 void FlagForFlow(int flag)
@@ -951,7 +938,7 @@ void ProcessData()
 void PostMessageToExternalDevice(int value)
 {
   // HTTPClient http; // Declare object of class HTTPClient
-  Serial.println("Posting to external device...");
+  // Serial.println("Posting to external device...");
 
   myData.cnt_espNow = value;
   esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
@@ -981,14 +968,14 @@ void OnDataRecv(uint8_t *mac_addr, uint8_t *incomingData, uint8_t len)
 
   FlagForFlowExternalDevice(incomingReadings.cnt_espNow);
 
-  Serial.printf("Board ID %u: %u bytes\n", incomingReadings.cnt_espNow, len);
-  Serial.println();
+  // Serial.printf("Board ID %u: %u bytes\n", incomingReadings.cnt_espNow, len);
+  // Serial.println();
 }
 
 // Callback when data is sent
 void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus)
 {
-  Serial.print("Last Packet Send Status: ");
+  // Serial.print("Last Packet Send Status: ");
   if (sendStatus == 0)
   {
     Serial.println("Delivery success");
