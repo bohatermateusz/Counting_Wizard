@@ -120,8 +120,8 @@ unsigned long interval = 10000;
 constexpr char WIFI_SSID[] = "ESP-7D82999";
 
 // MAC Address of the receiver
- //  uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
- uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
+uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
+// uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
 
 // Create a struct_message called myData
 struct_message myData;
@@ -243,9 +243,6 @@ void setup()
               //IsEEPROMWrite = true;
               request->send(200); });
 
-  // Start server
-  server.begin();
-
   String IPTrimmed = IPAdressOfExternalDevice;
   IPTrimmed.trim();
 
@@ -253,14 +250,14 @@ void setup()
   Serial.println(WiFi.channel());
 
   // Set device as a Wi-Fi Station and set channel
-  WiFi.mode(WIFI_STA);
+  WiFi.mode(WIFI_AP_STA);
 
   int32_t channel = getWiFiChannel(WIFI_SSID);
 
-  WiFi.printDiag(Serial); // Uncomment to verify channel number before
-  wifi_promiscuous_enable(1);
-  wifi_set_channel(channel);
-  wifi_promiscuous_enable(0);
+  // WiFi.printDiag(Serial); // Uncomment to verify channel number before
+  // wifi_promiscuous_enable(1);
+  // wifi_set_channel(channel);
+  // wifi_promiscuous_enable(0);
   WiFi.printDiag(Serial); // Uncomment to verify channel change after
 
   // Init ESP-NOW
@@ -278,6 +275,9 @@ void setup()
   esp_now_register_recv_cb(OnDataRecv);
 
   esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_COMBO, 1, NULL, 0);
+
+  // Start server
+  server.begin();
 }
 
 String getNewMinDistance()
