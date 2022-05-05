@@ -323,7 +323,7 @@ void loop()
   }
 
   distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
-  delay(50);
+  // delay(50);
   distanceSensor.setTimingBudgetInMs(50);
   distanceSensor.startRanging();           // Write configuration bytes to initiate measurement
   distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
