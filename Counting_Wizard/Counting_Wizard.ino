@@ -3,12 +3,12 @@
 
 // WebServer
 #include <ESPAsyncTCP.h>
-#include <FS.h>
-#include <Wire.h>
-#include <vector>
-#include "config.h"
+//#include <FS.h>
+//#include <Wire.h>
+//#include <vector>
+//#include "config.h"
 
-static std::vector<AsyncClient *> clients; // a list to hold all clients
+// static std::vector<AsyncClient *> clients; // a list to hold all clients
 
 #include "WiFiManager.h"
 WiFiManager wifiManager;
@@ -16,7 +16,7 @@ WiFiManager wifiManager;
 #define WEBSERVER_H
 #include "ESPAsyncWebServer.h"
 
-#include <ESP8266WiFi.h>
+//#include <ESP8266WiFi.h>
 
 #define DNS_PORT 53
 AsyncWebServer server(80);
@@ -95,7 +95,7 @@ uint8_t adres[2] = {0, 2};
 //
 #define EEPROM_SIZE 8
 
-String IPAdressOfExternalDevice;
+// String IPAdressOfExternalDevice;
 
 bool IsConnected;
 bool IsResetDevice;
@@ -219,13 +219,13 @@ void setup()
               String arg = request->arg("string");
               //Serial.print("New External IP adress is: ");
               //Serial.println(IPAdressOfExternalDevice);
-              IPAdressOfExternalDevice = arg;
+              //IPAdressOfExternalDevice = arg;
               request->send(200);
               IsEEPROMWrite = true;
               IsResetDevice = true; });
 
-  server.on("/getExternalIPAdress", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/plain", String(IPAdressOfExternalDevice)); });
+  // server.on("/getExternalIPAdress", HTTP_GET, [](AsyncWebServerRequest *request)
+  //           { request->send(200, "text/plain", String(IPAdressOfExternalDevice)); });
 
   server.on("/ExternalDeviceConnectionStatus", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(IsConnected)); });
@@ -286,7 +286,7 @@ void loop()
     // EEPROM.put(0, 1);
     // EEPROM.put(1, cnt);
     EEPROM.put(2, newMinDistance);
-    writeStringToEEPROM(3, IPAdressOfExternalDevice);
+    // writeStringToEEPROM(3, IPAdressOfExternalDevice);
     EEPROM.commit();
     // Serial.println("writed to eeprom");
     IsEEPROMWrite = false;
