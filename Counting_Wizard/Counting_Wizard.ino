@@ -123,6 +123,10 @@ uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
 // Create a struct_message called myData
 struct_message myData;
 
+// set 5 trials for send message to external device
+int j = 5;
+int i = 0;
+
 void setup()
 {
 
@@ -942,7 +946,7 @@ void PostMessageToExternalDevice(int value)
 
   myData.cnt_espNow = value;
   esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
-
+  i = 0;
   // String messageToPost = "http://192.168.4.1:80/PostMessageToExternalDevice?number=" + String(value);
   //  http.begin(messageToPost);                    // Specify request destination
   //  http.addHeader("Content-Type", "text/plain"); // Specify content-type header
@@ -972,16 +976,27 @@ void OnDataRecv(uint8_t *mac_addr, uint8_t *incomingData, uint8_t len)
   // Serial.println();
 }
 
-// Callback when data is sent
+// uint8_t status_OnDataSent;
+//  Callback when data is sent
 void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus)
 {
-  // Serial.print("Last Packet Send Status: ");
+  // status_OnDataSent = sendStatus;
+  //  Serial.print("Last Packet Send Status: ");
   if (sendStatus == 0)
   {
     Serial.println("Delivery success");
+    // i = 0;
   }
   else
   {
+    if (i < j)
+    {
+      i++;
+      esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
+      //delay(1000);
+    }
+    // i = 0;
+    Serial.println(String(i));
     Serial.println("Delivery fail");
   }
 }
