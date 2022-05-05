@@ -4,6 +4,14 @@
         "chrono": "cpp",
         "limits": "cpp",
         "random": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "array": "cpp",
+        "vector": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp",
+        "string": "cpp",
+        "bitset": "cpp",
+        "deque": "cpp",
+        "sstream": "cpp"
     }
 }
