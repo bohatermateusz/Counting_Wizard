@@ -117,14 +117,14 @@ struct_message incomingReadings;
 // constexpr char WIFI_SSID[] = "ESP-7D82999";
 
 // MAC Address of the receiver
-// uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
-uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
+uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
+// uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
 
 // Create a struct_message called myData
 struct_message myData;
 
 // set 5 trials for send message to external device
-int j = 5;
+int j = 15;
 int i = 0;
 
 void setup()
@@ -327,13 +327,13 @@ void loop()
   }
 
   distanceSensor.setROI(ROI_height, ROI_width, center[Zone]); // first value: height of the zone, second value: width of the zone
-  // delay(50);
+  delay(50);
   distanceSensor.setTimingBudgetInMs(50);
   distanceSensor.startRanging();           // Write configuration bytes to initiate measurement
   distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
   distanceSensor.stopRanging();
 
-  // //Serial.println(distance);
+  //Serial.println(distance);
   //  inject the new ranged distance in the people counting algorithm
   processPeopleCountingData(distance, Zone);
   ProcessData();
