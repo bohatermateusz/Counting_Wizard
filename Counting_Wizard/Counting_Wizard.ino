@@ -117,8 +117,8 @@ struct_message incomingReadings;
 // constexpr char WIFI_SSID[] = "ESP-7D82999";
 
 // MAC Address of the receiver
-uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
-// uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
+//uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
+ uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
 
 // Create a struct_message called myData
 struct_message myData;
@@ -254,7 +254,7 @@ void setup()
   // Init ESP-NOW
   if (esp_now_init() != 0)
   {
-    Serial.println("Error initializing ESP-NOW");
+    // Serial.println("Error initializing ESP-NOW");
     return;
   }
 
@@ -333,8 +333,8 @@ void loop()
   distance = distanceSensor.getDistance(); // Get the result of the measurement from the sensor
   distanceSensor.stopRanging();
 
-  //Serial.println(distance);
-  //  inject the new ranged distance in the people counting algorithm
+  // Serial.println(distance);
+  //   inject the new ranged distance in the people counting algorithm
   processPeopleCountingData(distance, Zone);
   ProcessData();
 
@@ -623,7 +623,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
         if ((PathTrack[1] == 1) && (PathTrack[2] == 3) && (PathTrack[3] == 2))
         {
           // this is an entry
-          Serial.println("Entering");
+          // Serial.println("Entering");
           FlagForFlow(1);
           // ws.printfAll("1");
           PostMessageToExternalDevice(1);
@@ -631,7 +631,7 @@ void processPeopleCountingData(int16_t Distance, uint8_t zone)
         else if ((PathTrack[1] == 2) && (PathTrack[2] == 3) && (PathTrack[3] == 1))
         {
           // This an exit
-          Serial.println("Exiting");
+          // Serial.println("Exiting");
           FlagForFlow(2);
           // ws.printfAll("2");
           PostMessageToExternalDevice(2);
@@ -762,24 +762,24 @@ void ProcessData()
       cnt++;
       Flag = 3;
       IsAdded = true;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
+      // Serial.println("Internal Flag:");
+      // Serial.println(Flag);
+      // Serial.println("Is added?");
+      // Serial.println(IsAdded);
+      // Serial.println("Flag External:");
+      // Serial.println(FlagExternal);
       break;
     case 3:
       if (IsAdded)
       {
         Flag = 0;
         FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
       else
@@ -788,12 +788,12 @@ void ProcessData()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = true;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
     }
@@ -808,24 +808,24 @@ void ProcessData()
       cnt++;
       FlagExternal = 3;
       IsAdded = true;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
+      // Serial.println("Internal Flag:");
+      // Serial.println(Flag);
+      // Serial.println("Is added?");
+      // Serial.println(IsAdded);
+      // Serial.println("Flag External:");
+      // Serial.println(FlagExternal);
       break;
     case 3:
       if (IsAdded)
       {
         Flag = 0;
         FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
       else
@@ -834,12 +834,12 @@ void ProcessData()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = true;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
     }
@@ -854,12 +854,12 @@ void ProcessData()
       cnt--;
       Flag = 4;
       IsAdded = false;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
+      // Serial.println("Internal Flag:");
+      // Serial.println(Flag);
+      // Serial.println("Is added?");
+      // Serial.println(IsAdded);
+      // Serial.println("Flag External:");
+      // Serial.println(FlagExternal);
       break;
 
     case 4:
@@ -869,24 +869,24 @@ void ProcessData()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = false;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
       else
       {
         Flag = 0;
         FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
     }
@@ -901,12 +901,12 @@ void ProcessData()
       cnt--;
       FlagExternal = 4;
       IsAdded = false;
-      Serial.println("Internal Flag:");
-      Serial.println(Flag);
-      Serial.println("Is added?");
-      Serial.println(IsAdded);
-      Serial.println("Flag External:");
-      Serial.println(FlagExternal);
+      // Serial.println("Internal Flag:");
+      // Serial.println(Flag);
+      // Serial.println("Is added?");
+      // Serial.println(IsAdded);
+      // Serial.println("Flag External:");
+      // Serial.println(FlagExternal);
       break;
     case 4:
       if (IsAdded)
@@ -915,24 +915,24 @@ void ProcessData()
         Flag = 0;
         FlagExternal = 0;
         IsAdded = false;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
       else
       {
         Flag = 0;
         FlagExternal = 0;
-        Serial.println("Internal Flag:");
-        Serial.println(Flag);
-        Serial.println("Is added?");
-        Serial.println(IsAdded);
-        Serial.println("Flag External:");
-        Serial.println(FlagExternal);
+        // Serial.println("Internal Flag:");
+        // Serial.println(Flag);
+        // Serial.println("Is added?");
+        // Serial.println(IsAdded);
+        // Serial.println("Flag External:");
+        // Serial.println(FlagExternal);
         break;
       }
     }
@@ -984,8 +984,8 @@ void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus)
   //  Serial.print("Last Packet Send Status: ");
   if (sendStatus == 0)
   {
-    Serial.println("Delivery success");
-    // i = 0;
+    // Serial.println("Delivery success");
+    //  i = 0;
   }
   else
   {
@@ -993,10 +993,10 @@ void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus)
     {
       i++;
       esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
-      //delay(1000);
+      // delay(1000);
     }
     // i = 0;
-    Serial.println(String(i));
-    Serial.println("Delivery fail");
+    // Serial.println(String(i));
+    // Serial.println("Delivery fail");
   }
 }
