@@ -117,8 +117,8 @@ struct_message incomingReadings;
 // constexpr char WIFI_SSID[] = "ESP-7D82999";
 
 // MAC Address of the receiver
-//uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
- uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
+ uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
+//uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
 
 // Create a struct_message called myData
 struct_message myData;
@@ -233,6 +233,17 @@ void setup()
 
   server.on("/ExternalDeviceConnectionStatus", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", String(IsConnected)); });
+
+  server.on("/resetFlags", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
+             Flag = 0;
+             FlagExternal = 0;
+             FlagLastChangeInLoop = 0;
+             IsAdded = 0;
+              request->send(200); });
+
+  server.on("/getFlags", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", String(FlagsToStrings())); });
 
   // String IPTrimmed = IPAdressOfExternalDevice;
   // IPTrimmed.trim();
@@ -662,6 +673,13 @@ String handleADC()
 {
   String adc = String(cnt);
   return adc;
+}
+
+String FlagsToStrings()
+{
+  String FlagsSumAsString;
+  FlagsSumAsString = "Flags " + String(Flag) + ";" + "EnumFlagExternal " + String(FlagExternal) + ";" + "EnumFlagLastChangeInLoop " + String(FlagLastChangeInLoop) + ";" + "IsAdded " + String(IsAdded);
+  return FlagsSumAsString;
 }
 
 extern "C"

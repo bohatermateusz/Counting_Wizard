@@ -7,6 +7,9 @@
         "complex": "cpp",
         "thread": "cpp",
         "xlocale": "cpp",
-        "locale": "cpp"
+        "locale": "cpp",
+        "regex": "cpp",
+        "xiosbase": "cpp",
+        "ios": "cpp"
     }
 }
