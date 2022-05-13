@@ -1,0 +1,3 @@
+#define SECRET_SSID "Erasmus_Network"
+#define SECRET_PASS "Mercedes123"
+#define SECRET_DEVICE_KEY "85LZXLD1GXRPGZEOEDKF"
