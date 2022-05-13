@@ -117,8 +117,8 @@ struct_message incomingReadings;
 // constexpr char WIFI_SSID[] = "ESP-7D82999";
 
 // MAC Address of the receiver
-//uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
- uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
+// uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
+uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
 
 // Create a struct_message called myData
 struct_message myData;
@@ -126,6 +126,9 @@ struct_message myData;
 // set 5 trials for send message to external device
 int j = 15;
 int i = 0;
+
+#include "arduino_secrets.h"
+#include "thingProperties.h"
 
 void setup()
 {
@@ -260,6 +263,10 @@ void setup()
   // wifi_promiscuous_enable(1);
   // wifi_set_channel(channel);
   // wifi_promiscuous_enable(0);
+
+  // Defined in thingProperties.h
+  initProperties();
+
   WiFi.printDiag(Serial); // Uncomment to verify channel change after
 
   // Init ESP-NOW
@@ -278,6 +285,10 @@ void setup()
 
   // esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_COMBO, 1, NULL, 0);
 
+  // Connect to Arduino IoT Cloud
+  ArduinoCloud.begin(ArduinoIoTPreferredConnection);
+  setDebugMessageLevel(2);
+  ArduinoCloud.printDebugInfo();
   // Start server
   server.begin();
 }
@@ -351,6 +362,9 @@ void loop()
 
   Zone++;
   Zone = Zone % 2;
+
+  cntCloud = cnt;
+  ArduinoCloud.update();
 
   DNS.processNextRequest();
 }
