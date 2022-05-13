@@ -285,7 +285,8 @@ void setup()
 
   // esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_COMBO, 1, NULL, 0);
 
-  // Connect to Arduino IoT Cloud
+  // Connect to Arduino IoT Clou
+  
   ArduinoCloud.begin(ArduinoIoTPreferredConnection);
   setDebugMessageLevel(2);
   ArduinoCloud.printDebugInfo();
@@ -363,7 +364,7 @@ void loop()
   Zone++;
   Zone = Zone % 2;
 
-  cntCloud = cnt;
+  cntForCloud = cnt;
   ArduinoCloud.update();
 
   DNS.processNextRequest();
