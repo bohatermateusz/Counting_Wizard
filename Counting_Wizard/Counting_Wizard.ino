@@ -10,7 +10,7 @@
 
 // static std::vector<AsyncClient *> clients; // a list to hold all clients
 
-#include "WiFiManager.h"
+#include <WiFiManager.h>
 WiFiManager wifiManager;
 
 #define WEBSERVER_H
@@ -286,7 +286,7 @@ void setup()
   // esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_COMBO, 1, NULL, 0);
 
   // Connect to Arduino IoT Clou
-  
+
   ArduinoCloud.begin(ArduinoIoTPreferredConnection);
   setDebugMessageLevel(2);
   ArduinoCloud.printDebugInfo();
@@ -368,6 +368,13 @@ void loop()
   ArduinoCloud.update();
 
   DNS.processNextRequest();
+  // String test;
+  //  test = WiFi.BSSIDstr().c_str();
+  //   strcpy(SSID, test);
+
+  // test = wifiManager.getSSID();
+  //Serial.println(WiFi.SSID());
+  //Serial.println(WiFi.psk());
 }
 
 void zones_calibration()

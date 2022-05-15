@@ -12,6 +12,14 @@
         "string": "cpp",
         "bitset": "cpp",
         "deque": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "initializer_list": "cpp",
+        "list": "cpp",
+        "regex": "cpp",
+        "xhash": "cpp",
+        "xtree": "cpp",
+        "unordered_map": "cpp",
+        "associative_base": "cpp",
+        "serstream": "cpp"
     }
 }
