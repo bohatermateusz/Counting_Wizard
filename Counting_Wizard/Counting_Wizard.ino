@@ -117,8 +117,8 @@ struct_message incomingReadings;
 // constexpr char WIFI_SSID[] = "ESP-7D82999";
 
 // MAC Address of the receiver
-// uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
-uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
+uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
+// uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
 
 // Create a struct_message called myData
 struct_message myData;
@@ -373,8 +373,8 @@ void loop()
   //   strcpy(SSID, test);
 
   // test = wifiManager.getSSID();
-  //Serial.println(WiFi.SSID());
-  //Serial.println(WiFi.psk());
+  // Serial.println(WiFi.SSID());
+  // Serial.println(WiFi.psk());
 }
 
 void zones_calibration()
