@@ -287,7 +287,7 @@ void setup()
 
   // Connect to Arduino IoT Clou
 
-  ArduinoCloud.begin(ArduinoIoTPreferredConnection);
+  ArduinoCloud.begin(ArduinoIoTPreferredConnection, false);
   setDebugMessageLevel(2);
   ArduinoCloud.printDebugInfo();
   // Start server
