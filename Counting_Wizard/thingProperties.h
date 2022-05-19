@@ -10,6 +10,9 @@ char PASS[50];                               // = SECRET_PASS;             // Ne
 const char DEVICE_KEY[] = SECRET_DEVICE_KEY; // Secret device password
 
 int cntForCloud;
+int cntChanged;
+
+void onCntChangedChange();
 
 void initProperties()
 {
@@ -31,6 +34,7 @@ void initProperties()
   ArduinoCloud.setBoardId(DEVICE_LOGIN_NAME);
   ArduinoCloud.setSecretDeviceKey(DEVICE_KEY);
   ArduinoCloud.addProperty(cntForCloud, READ, 5 * SECONDS, NULL);
+  ArduinoCloud.addProperty(cntChanged, READWRITE, 5 * SECONDS, onCntChangedChange);
 }
 
 WiFiConnectionHandler ArduinoIoTPreferredConnection(SSID, PASS);

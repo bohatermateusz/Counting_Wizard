@@ -1044,3 +1044,8 @@ void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus)
     // Serial.println("Delivery fail");
   }
 }
+
+void onCntChangedChange()
+{
+  cnt = cntChanged;
+}
