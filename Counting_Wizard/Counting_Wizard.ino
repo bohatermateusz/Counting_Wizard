@@ -800,6 +800,7 @@ void ProcessData()
     case 0:
     case 4:
     case 1:
+      IsEEPROMWrite = true;
       cnt++;
       Flag = 3;
       IsAdded = true;
@@ -825,6 +826,7 @@ void ProcessData()
       }
       else
       {
+        IsEEPROMWrite = true;
         cnt++;
         Flag = 0;
         FlagExternal = 0;
@@ -847,6 +849,7 @@ void ProcessData()
     case 0:
     case 4:
     case 1:
+      IsEEPROMWrite = true;
       cnt++;
       FlagExternal = 3;
       IsAdded = true;
@@ -860,6 +863,7 @@ void ProcessData()
     case 3:
       if (IsAdded)
       {
+        IsEEPROMWrite = true;
         Flag = 0;
         FlagExternal = 0;
         // Serial.println("Internal Flag:");
@@ -872,6 +876,7 @@ void ProcessData()
       }
       else
       {
+        IsEEPROMWrite = true;
         cnt++;
         Flag = 0;
         FlagExternal = 0;
@@ -894,6 +899,7 @@ void ProcessData()
     case 0:
     case 3:
     case 2:
+      IsEEPROMWrite = true;
       cnt--;
       Flag = 4;
       IsAdded = false;
@@ -908,6 +914,7 @@ void ProcessData()
     case 4:
       if (IsAdded)
       {
+        IsEEPROMWrite = true;
         cnt--;
         Flag = 0;
         FlagExternal = 0;
@@ -942,6 +949,7 @@ void ProcessData()
     case 0:
     case 3:
     case 2:
+      IsEEPROMWrite = true;
       cnt--;
       FlagExternal = 4;
       IsAdded = false;
@@ -955,6 +963,7 @@ void ProcessData()
     case 4:
       if (IsAdded)
       {
+        IsEEPROMWrite = true;
         cnt--;
         Flag = 0;
         FlagExternal = 0;
@@ -1047,5 +1056,6 @@ void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus)
 
 void onCntChangedChange()
 {
+  IsEEPROMWrite = true;
   cnt = cntChanged;
 }
