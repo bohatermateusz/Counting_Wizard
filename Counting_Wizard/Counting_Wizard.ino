@@ -117,8 +117,14 @@ struct_message incomingReadings;
 // constexpr char WIFI_SSID[] = "ESP-7D82999";
 
 // MAC Address of the receiver
-uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
+// uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
 // uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
+
+// new mac after 3stawy
+// ip:135
+// uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0x98, 0x15};
+// ip:136
+uint8_t broadcastAddress[] = {0x5C, 0xCF, 0x7F, 0x6D, 0x1F, 0xEA};
 
 // Create a struct_message called myData
 struct_message myData;
@@ -129,6 +135,8 @@ int i = 0;
 
 #include "arduino_secrets.h"
 #include "thingProperties.h"
+
+bool flagToNotReadyCntChangedOnStart;
 
 void setup()
 {
@@ -268,7 +276,7 @@ void setup()
   initProperties();
 
   WiFi.printDiag(Serial); // Uncomment to verify channel change after
-
+  Serial.println(String(WiFi.macAddress()));
   // Init ESP-NOW
   if (esp_now_init() != 0)
   {
@@ -290,7 +298,7 @@ void setup()
   ArduinoCloud.begin(ArduinoIoTPreferredConnection, false);
   setDebugMessageLevel(2);
   ArduinoCloud.printDebugInfo();
-  // Start server
+  //  Start server
   server.begin();
 }
 
@@ -311,6 +319,7 @@ void loop()
   if (IsEEPROMWrite == true)
   {
     // EEPROM.put(0, 1);
+    Serial.println("Writing to eeprom");
     EEPROM.put(1, cnt);
     EEPROM.put(2, newMinDistance);
     // writeStringToEEPROM(3, IPAdressOfExternalDevice);
@@ -800,8 +809,8 @@ void ProcessData()
     case 0:
     case 4:
     case 1:
-      IsEEPROMWrite = true;
       cnt++;
+      IsEEPROMWrite = true;
       Flag = 3;
       IsAdded = true;
       // Serial.println("Internal Flag:");
@@ -826,8 +835,8 @@ void ProcessData()
       }
       else
       {
-        IsEEPROMWrite = true;
         cnt++;
+        IsEEPROMWrite = true;
         Flag = 0;
         FlagExternal = 0;
         IsAdded = true;
@@ -849,8 +858,8 @@ void ProcessData()
     case 0:
     case 4:
     case 1:
-      IsEEPROMWrite = true;
       cnt++;
+      IsEEPROMWrite = true;
       FlagExternal = 3;
       IsAdded = true;
       // Serial.println("Internal Flag:");
@@ -863,7 +872,6 @@ void ProcessData()
     case 3:
       if (IsAdded)
       {
-        IsEEPROMWrite = true;
         Flag = 0;
         FlagExternal = 0;
         // Serial.println("Internal Flag:");
@@ -876,8 +884,8 @@ void ProcessData()
       }
       else
       {
-        IsEEPROMWrite = true;
         cnt++;
+        IsEEPROMWrite = true;
         Flag = 0;
         FlagExternal = 0;
         IsAdded = true;
@@ -899,8 +907,8 @@ void ProcessData()
     case 0:
     case 3:
     case 2:
-      IsEEPROMWrite = true;
       cnt--;
+      IsEEPROMWrite = true;
       Flag = 4;
       IsAdded = false;
       // Serial.println("Internal Flag:");
@@ -914,8 +922,8 @@ void ProcessData()
     case 4:
       if (IsAdded)
       {
-        IsEEPROMWrite = true;
         cnt--;
+        IsEEPROMWrite = true;
         Flag = 0;
         FlagExternal = 0;
         IsAdded = false;
@@ -949,8 +957,8 @@ void ProcessData()
     case 0:
     case 3:
     case 2:
-      IsEEPROMWrite = true;
       cnt--;
+      IsEEPROMWrite = true;
       FlagExternal = 4;
       IsAdded = false;
       // Serial.println("Internal Flag:");
@@ -963,8 +971,8 @@ void ProcessData()
     case 4:
       if (IsAdded)
       {
-        IsEEPROMWrite = true;
         cnt--;
+        IsEEPROMWrite = true;
         Flag = 0;
         FlagExternal = 0;
         IsAdded = false;
@@ -1056,6 +1064,10 @@ void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus)
 
 void onCntChangedChange()
 {
-  IsEEPROMWrite = true;
-  cnt = cntChanged;
+  if (flagToNotReadyCntChangedOnStart == true)
+  {
+    IsEEPROMWrite = true;
+    cnt = cntChanged;
+  }
+  flagToNotReadyCntChangedOnStart = true;
 }
