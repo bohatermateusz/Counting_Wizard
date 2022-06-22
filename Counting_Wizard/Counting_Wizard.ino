@@ -124,7 +124,10 @@ struct_message incomingReadings;
 // ip:135
 // uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0x98, 0x15};
 // ip:136
-uint8_t broadcastAddress[] = {0x5C, 0xCF, 0x7F, 0x6D, 0x1F, 0xEA};
+uint8_t broadcastAddress[] = {0x5C, 0xCF, 0x7F, 0x6D, 0x1F, 0xd7};
+
+// mac address for opener_main: 5c:cf:7f:6d:1f:e2
+// mac address for opener_support: 5c:cf:7f:6d:1f:d7
 
 // Create a struct_message called myData
 struct_message myData;
