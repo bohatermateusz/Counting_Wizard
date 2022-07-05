@@ -22,6 +22,9 @@ WiFiManager wifiManager;
 AsyncWebServer server(80);
 DNSServer DNS;
 
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
 float threshold_percentage = 80;
 
 // if "true", the raw measurements are sent via MQTT during runtime (for debugging) - I'd recommend setting it to "false" to save traffic and system resources.
@@ -140,6 +143,13 @@ int i = 0;
 #include "thingProperties.h"
 
 bool flagToNotReadyCntChangedOnStart;
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "europe.pool.ntp.org", 7200, 60000);
+
+int currentHour;
+int currentMinute;
+int currentSecond;
 
 void setup()
 {
@@ -303,6 +313,7 @@ void setup()
   ArduinoCloud.printDebugInfo();
   //  Start server
   server.begin();
+  timeClient.begin();
 }
 
 String getNewMinDistance()
@@ -387,6 +398,21 @@ void loop()
   // test = wifiManager.getSSID();
   // Serial.println(WiFi.SSID());
   // Serial.println(WiFi.psk());
+  timeClient.update();
+  currentHour = timeClient.getHours();
+  currentMinute = timeClient.getMinutes();
+  currentSecond = timeClient.getSeconds();
+
+  if (currentHour == 2 && currentMinute == 0 && currentSecond == 0)
+  {
+    cnt == 0;
+    EEPROM.put(1, cnt);
+    EEPROM.commit();
+    ESP.restart();
+  }
+
+  
+  
 }
 
 void zones_calibration()
