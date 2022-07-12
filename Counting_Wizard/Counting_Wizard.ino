@@ -402,17 +402,19 @@ void loop()
   currentHour = timeClient.getHours();
   currentMinute = timeClient.getMinutes();
   currentSecond = timeClient.getSeconds();
-
+  // Serial.println("Current Hour:");
+  // Serial.println(currentHour);
+  // Serial.println("Current Minute:");
+  // Serial.println(currentMinute);
+  // Serial.println("Current Second:");
+  // Serial.println(currentSecond);
   if (currentHour == 2 && currentMinute == 0 && currentSecond == 0)
   {
-    cnt == 0;
+    cnt = 0;
     EEPROM.put(1, cnt);
     EEPROM.commit();
     ESP.restart();
   }
-
-  
-  
 }
 
 void zones_calibration()
