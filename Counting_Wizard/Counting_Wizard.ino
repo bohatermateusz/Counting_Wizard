@@ -120,7 +120,7 @@ struct_message incomingReadings;
 // constexpr char WIFI_SSID[] = "ESP-7D82999";
 
 // MAC Address of the receiver
-//uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
+// uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
 uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
 
 // new mac after 3stawy
@@ -308,9 +308,9 @@ void setup()
 
   // Connect to Arduino IoT Clou
 
-   ArduinoCloud.begin(ArduinoIoTPreferredConnection, false);
-   setDebugMessageLevel(2);
-   ArduinoCloud.printDebugInfo();
+  ArduinoCloud.begin(ArduinoIoTPreferredConnection, false);
+  setDebugMessageLevel(2);
+  ArduinoCloud.printDebugInfo();
   //   Start server
   server.begin();
   timeClient.begin();
@@ -388,7 +388,7 @@ void loop()
   Zone = Zone % 2;
 
   cntForCloud = cnt;
-   ArduinoCloud.update();
+  ArduinoCloud.update();
 
   DNS.processNextRequest();
   // String test;
@@ -408,13 +408,6 @@ void loop()
   // Serial.println(currentMinute);
   // Serial.println("Current Second:");
   // Serial.println(currentSecond);
-  if (currentHour == 2 && currentMinute == 0 && currentSecond == 0)
-  {
-    cnt = 0;
-    EEPROM.put(1, cnt);
-    EEPROM.commit();
-    ESP.restart();
-  }
 }
 
 void zones_calibration()
