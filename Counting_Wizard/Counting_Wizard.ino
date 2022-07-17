@@ -121,7 +121,16 @@ struct_message incomingReadings;
 
 // MAC Address of the receiver
 // uint8_t broadcastAddress[] = {0x5c, 0xcf, 0x7f, 0x6d, 0x1f, 0xe7};
-uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
+//uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0xB5, 0xB3};
+//Gawra Warszawska 2gie pomieszczenie 2gie wejscie, master:
+//uint8_t broadcastAddress[] = {0x5C, 0xCF, 0x7F, 0x6D, 0x1F, 0xDA};
+////Gawra Warszawska 2gie pomieszczenie 2gie wejscie, slave:
+////Hotele_Pracownicze, maser adress:
+uint8_t broadcastAddress[] = {0x5C, 0xCF, 0x7F, 0x6D, 0x1F, 0xE9};
+//68:C6:3A:A5:9B:6F
+////Hotele_Pracownicze, slave adress:
+//uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0x9B, 0x6F};
+
 
 // new mac after 3stawy
 // ip:135
@@ -308,9 +317,9 @@ void setup()
 
   // Connect to Arduino IoT Clou
 
-  ArduinoCloud.begin(ArduinoIoTPreferredConnection, false);
-  setDebugMessageLevel(2);
-  ArduinoCloud.printDebugInfo();
+  //ArduinoCloud.begin(ArduinoIoTPreferredConnection, false);
+  //setDebugMessageLevel(2);
+  //ArduinoCloud.printDebugInfo();
   //   Start server
   server.begin();
   timeClient.begin();
@@ -388,7 +397,7 @@ void loop()
   Zone = Zone % 2;
 
   cntForCloud = cnt;
-  ArduinoCloud.update();
+  //ArduinoCloud.update();
 
   DNS.processNextRequest();
   // String test;
