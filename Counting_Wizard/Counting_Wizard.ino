@@ -286,7 +286,7 @@ void setup()
   // Serial.println(WiFi.channel());
 
   // Set device as a Wi-Fi Station and set channel
-  WiFi.mode(WIFI_AP_STA);
+  WiFi.mode(WIFI_STA);
 
   // int32_t channel = getWiFiChannel(WIFI_SSID);
 
