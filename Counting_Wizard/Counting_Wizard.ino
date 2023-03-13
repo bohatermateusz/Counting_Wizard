@@ -132,12 +132,16 @@ struct_message incomingReadings;
 // Sklep, master adress:
 //uint8_t broadcastAddress[] = {0xE8, 0x68, 0xE7, 0x5A, 0x91, 0x30};
 // Sklep, slave adress:
-uint8_t broadcastAddress[] = {0x5C, 0xCF, 0x7F, 0x6D, 0x1F, 0xE8};
+//uint8_t broadcastAddress[] = {0x5C, 0xCF, 0x7F, 0x6D, 0x1F, 0xE8};
 // new mac after 3stawy
 // ip:135
 // uint8_t broadcastAddress[] = {0x68, 0xC6, 0x3A, 0xA5, 0x98, 0x15};
 // ip:136
 // uint8_t broadcastAddress[] = {0x5C, 0xCF, 0x7F, 0x6D, 0x1F, 0xd7};
+//Swiat_ksiazki_2.1, adres mastera
+uint8_t broadcastAddress[] = {0x5C, 0xCF, 0x7F, 0x6D, 0x1F, 0xE3};
+//Swiat_ksiazki_2.1, adres slave
+//uint8_t broadcastAddress[] = {0x5C, 0xCF, 0x7F, 0x6D, 0x1F, 0xEC};
 
 // mac address for opener_main: 5c:cf:7f:6d:1f:e2
 // mac address for opener_support: 5c:cf:7f:6d:1f:d7
@@ -318,9 +322,9 @@ void setup()
 
   // Connect to Arduino IoT Clou
 
-  ArduinoCloud.begin(ArduinoIoTPreferredConnection, false);
-  setDebugMessageLevel(2);
-  ArduinoCloud.printDebugInfo();
+  //ArduinoCloud.begin(ArduinoIoTPreferredConnection, false);
+  //setDebugMessageLevel(2);
+  //ArduinoCloud.printDebugInfo();
   //   Start server
   server.begin();
   timeClient.begin();
@@ -398,7 +402,7 @@ void loop()
   Zone = Zone % 2;
 
   cntForCloud = cnt;
-  ArduinoCloud.update();
+  //ArduinoCloud.update();
 
   DNS.processNextRequest();
   // String test;
